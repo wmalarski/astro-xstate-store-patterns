@@ -1,0 +1,11 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { ProductList } from "../modules/react1/ProductList";
+import { patternAData } from "../patterns/patternA/data";
+---
+
+<Layout title="React-1">
+  <main>
+    <ProductList products={patternAData.products} />
+  </main>
+</Layout>
