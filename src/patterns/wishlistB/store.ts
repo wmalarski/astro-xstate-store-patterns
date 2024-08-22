@@ -2,7 +2,6 @@ import { createStore } from "@xstate/store";
 
 export type WishlistBProductGroup = {
   productId: string;
-  category: string;
   note: string;
 };
 
@@ -10,10 +9,9 @@ type CreateWishlistBStoreArgs = {
   initialProductGroups: WishlistBProductGroup[];
 };
 
-type CreateWishlistBStoreAddEvent = {
-  productId: string;
-  category: string;
-};
+type CreateWishlistBStoreAddEvent = WishlistBProductGroup;
+
+type CreateWishlistBStoreEditEvent = WishlistBProductGroup;
 
 type CreateWishlistBStoreRemoveEvent = {
   productId: string;
@@ -28,13 +26,21 @@ export const createWishlistBStore = ({
       add: (context, event: CreateWishlistBStoreAddEvent) => {
         return {
           ...context,
-          productIds: [...context.productGroups, event.productId],
+          productGroups: [...context.productGroups, event],
+        };
+      },
+      edit: (context, event: CreateWishlistBStoreEditEvent) => {
+        return {
+          ...context,
+          productGroups: context.productGroups.map((product) =>
+            product.productId === event.productId ? event : product
+          ),
         };
       },
       remove: (context, event: CreateWishlistBStoreRemoveEvent) => {
         return {
           ...context,
-          productIds: context.productGroups.filter(
+          productGroups: context.productGroups.filter(
             (product) => product.productId !== event.productId
           ),
         };
@@ -42,3 +48,5 @@ export const createWishlistBStore = ({
     }
   );
 };
+
+export type WishlistBStore = ReturnType<typeof createWishlistBStore>;
