@@ -1,8 +1,8 @@
 import type { FC } from "react";
-import type { PatternAProduct } from "../../patterns/products/types";
+import type { Product } from "../../patterns/products/types";
 
 type ProductListProps = {
-  products: PatternAProduct[];
+  products: Product[];
 };
 
 export const ProductList: FC<ProductListProps> = ({ products }) => {

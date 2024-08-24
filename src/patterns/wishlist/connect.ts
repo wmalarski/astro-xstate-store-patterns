@@ -3,6 +3,7 @@ import type { MachineApi } from "./types";
 
 export const connect = (store: WishlistStore): MachineApi => {
   return {
+    store,
     getAddButtonProps(args) {
       return {
         onClick() {

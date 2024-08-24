@@ -3,6 +3,7 @@ import type { MachineApi } from "./types";
 
 export const connect = (store: FlatListStore): MachineApi => {
   return {
+    store,
     getAddListFormProps() {
       return {
         onSubmit(event) {

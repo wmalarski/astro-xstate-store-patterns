@@ -1,11 +1,11 @@
 import type { FC } from "react";
-import type { PatternAProduct } from "../../patterns/products/types";
+import type { Product } from "../../patterns/products/types";
 
-type ProductListProps = {
-  products: PatternAProduct[];
+type FlatWishlistProps = {
+  products: Product[];
 };
 
-export const ProductList: FC<ProductListProps> = ({ products }) => {
+export const FlatWishlist: FC<FlatWishlistProps> = ({ products }) => {
   return (
     <ul>
       {products.map((product) => (

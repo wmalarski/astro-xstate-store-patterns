@@ -1,9 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { React1Example } from "../modules/react/React1Example";
+import { getProducts } from "../patterns/products/data";
+
+const data = getProducts().products;
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="Welcome to Wishlist.">
   <main>
-    <a href="/react-1">React 1</a>
+    <React1Example products={data} />
   </main>
 </Layout>

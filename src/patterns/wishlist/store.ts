@@ -6,7 +6,7 @@ export type WishlistProductGroup = {
 };
 
 type CreateWishlistStoreArgs = {
-  initialProductGroups: WishlistProductGroup[];
+  initialProductGroups?: WishlistProductGroup[];
 };
 
 type CreateWishlistStoreAddEvent = WishlistProductGroup;
@@ -19,9 +19,9 @@ type CreateWishlistStoreRemoveEvent = {
 
 export const createWishlistStore = ({
   initialProductGroups,
-}: CreateWishlistStoreArgs) => {
+}: CreateWishlistStoreArgs = {}) => {
   return createStore(
-    { productGroups: initialProductGroups },
+    { productGroups: initialProductGroups ?? [] },
     {
       add: (context, event: CreateWishlistStoreAddEvent) => {
         return {

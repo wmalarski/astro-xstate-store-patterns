@@ -26,14 +26,14 @@ type FlatListStoreRemoveFromListEvent = {
 };
 
 type CreateFlatListStoreArgs = {
-  initialLists: FlatListProductGroup[];
+  initialLists?: FlatListProductGroup[];
 };
 
 export const createFlatListStore = ({
   initialLists,
-}: CreateFlatListStoreArgs) => {
+}: CreateFlatListStoreArgs = {}) => {
   return createStore(
-    { lists: initialLists },
+    { lists: initialLists ?? [] },
     {
       addList: (context, args: FlatListStoreAddListEvent) => {
         return {

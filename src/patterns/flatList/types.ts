@@ -1,4 +1,5 @@
 import type { ComponentProps } from "react";
+import type { FlatListStore } from "./store";
 
 export interface ItemProps {
   listId: string;
@@ -6,6 +7,7 @@ export interface ItemProps {
 }
 
 export type MachineApi = {
+  store: FlatListStore;
   getAddListFormProps(): ComponentProps<"form">;
   getAddToListFormProps(): ComponentProps<"form">;
   getRemoveListButtonProps(listId: string): ComponentProps<"button">;

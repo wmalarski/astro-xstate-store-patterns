@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import type { NestedStoreSetParentsEvent } from "./store";
+import type { NestedStore, NestedStoreSetParentsEvent } from "./store";
 
 export interface ItemProps {
   listId: string;
@@ -7,6 +7,7 @@ export interface ItemProps {
 }
 
 export type MachineApi = {
+  store: NestedStore;
   setParents(event: NestedStoreSetParentsEvent): void;
   getAddListFormProps(): ComponentProps<"form">;
   getAddToListFormProps(): ComponentProps<"form">;
