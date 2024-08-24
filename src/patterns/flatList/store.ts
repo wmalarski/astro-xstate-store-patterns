@@ -1,13 +1,9 @@
 import { createStore } from "@xstate/store";
 
-export type FlatListBProductGroup = {
+export type FlatListProductGroup = {
   listId: string;
   name: string;
   productIds: string[];
-};
-
-type CreateFlatListStoreArgs = {
-  initialList: FlatListBProductGroup[];
 };
 
 type FlatListStoreAddListEvent = {
@@ -29,27 +25,28 @@ type FlatListStoreRemoveFromListEvent = {
   productId: string;
 };
 
+type CreateFlatListStoreArgs = {
+  initialLists: FlatListProductGroup[];
+};
+
 export const createFlatListStore = ({
-  initialList,
+  initialLists,
 }: CreateFlatListStoreArgs) => {
   return createStore(
-    { lists: initialList },
+    { lists: initialLists },
     {
-      addList: (context, { listId, name }: FlatListStoreAddListEvent) => {
+      addList: (context, args: FlatListStoreAddListEvent) => {
         return {
           ...context,
-          lists: [...context.lists, { listId, name, productIds: [] }],
+          lists: [...context.lists, { ...args, productIds: [] }],
         };
       },
-      addToList: (
-        context,
-        { listId, productId }: FlatListStoreAddToListEvent
-      ) => {
+      addToList: (context, event: FlatListStoreAddToListEvent) => {
         return {
           ...context,
           productIds: context.lists.map((list) =>
-            list.listId === listId
-              ? { ...list, productIds: [...list.productIds, productId] }
+            list.listId === event.listId
+              ? { ...list, productIds: [...list.productIds, event.productId] }
               : list
           ),
         };
