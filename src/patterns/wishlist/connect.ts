@@ -1,7 +1,7 @@
-import type { WishlistBStore } from "./store";
+import type { WishlistStore } from "./store";
 import type { MachineApi } from "./types";
 
-export const connect = (store: WishlistBStore): MachineApi => {
+export const connect = (store: WishlistStore): MachineApi => {
   return {
     getAddButtonProps(args) {
       return {

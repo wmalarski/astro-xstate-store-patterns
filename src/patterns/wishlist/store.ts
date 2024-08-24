@@ -1,35 +1,35 @@
 import { createStore } from "@xstate/store";
 
-export type WishlistBProductGroup = {
+export type WishlistProductGroup = {
   productId: string;
   note: string;
 };
 
-type CreateWishlistBStoreArgs = {
-  initialProductGroups: WishlistBProductGroup[];
+type CreateWishlistStoreArgs = {
+  initialProductGroups: WishlistProductGroup[];
 };
 
-type CreateWishlistBStoreAddEvent = WishlistBProductGroup;
+type CreateWishlistStoreAddEvent = WishlistProductGroup;
 
-type CreateWishlistBStoreEditEvent = WishlistBProductGroup;
+type CreateWishlistStoreEditEvent = WishlistProductGroup;
 
-type CreateWishlistBStoreRemoveEvent = {
+type CreateWishlistStoreRemoveEvent = {
   productId: string;
 };
 
-export const createWishlistBStore = ({
+export const createWishlistStore = ({
   initialProductGroups,
-}: CreateWishlistBStoreArgs) => {
+}: CreateWishlistStoreArgs) => {
   return createStore(
     { productGroups: initialProductGroups },
     {
-      add: (context, event: CreateWishlistBStoreAddEvent) => {
+      add: (context, event: CreateWishlistStoreAddEvent) => {
         return {
           ...context,
           productGroups: [...context.productGroups, event],
         };
       },
-      edit: (context, event: CreateWishlistBStoreEditEvent) => {
+      edit: (context, event: CreateWishlistStoreEditEvent) => {
         return {
           ...context,
           productGroups: context.productGroups.map((product) =>
@@ -37,7 +37,7 @@ export const createWishlistBStore = ({
           ),
         };
       },
-      remove: (context, event: CreateWishlistBStoreRemoveEvent) => {
+      remove: (context, event: CreateWishlistStoreRemoveEvent) => {
         return {
           ...context,
           productGroups: context.productGroups.filter(
@@ -49,4 +49,4 @@ export const createWishlistBStore = ({
   );
 };
 
-export type WishlistBStore = ReturnType<typeof createWishlistBStore>;
+export type WishlistStore = ReturnType<typeof createWishlistStore>;

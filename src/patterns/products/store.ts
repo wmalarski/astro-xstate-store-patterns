@@ -5,7 +5,7 @@ type CreateProductsStoreArgs = {
   initialProducts: Product[];
 };
 
-export const createProductAStore = ({
+export const createProductsStore = ({
   initialProducts,
 }: CreateProductsStoreArgs) => {
   return createStore({ products: initialProducts }, {});
