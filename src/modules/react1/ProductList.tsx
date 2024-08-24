@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { PatternAProduct } from "../../patterns/productsA/types";
+import type { PatternAProduct } from "../../patterns/products/types";
 
 type ProductListProps = {
   products: PatternAProduct[];
