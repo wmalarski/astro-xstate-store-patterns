@@ -18,8 +18,16 @@ export const React1Example: FC<React1ExampleProps> = ({ products }) => {
 
   return (
     <div>
-      <ProductList products={products} />
-      <FlatWishlist products={products} />
+      <ProductList
+        products={products}
+        flatListApi={flatListApi}
+        wishlistApi={wishlistApi}
+      />
+      <FlatWishlist
+        products={products}
+        flatListApi={flatListApi}
+        wishlistApi={wishlistApi}
+      />
     </div>
   );
 };
