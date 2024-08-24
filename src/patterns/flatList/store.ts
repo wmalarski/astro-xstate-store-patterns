@@ -24,6 +24,11 @@ type FlatListStoreRemoveListEvent = {
   listId: string;
 };
 
+type FlatListStoreRemoveFromListEvent = {
+  listId: string;
+  productId: string;
+};
+
 export const createFlatListStore = ({
   initialList,
 }: CreateFlatListStoreArgs) => {
@@ -55,10 +60,19 @@ export const createFlatListStore = ({
           lists: context.lists.filter((list) => list.listId !== event.listId),
         };
       },
-      removeFromList: (context, event: FlatListStoreRemoveListEvent) => {
+      removeFromList: (context, event: FlatListStoreRemoveFromListEvent) => {
         return {
           ...context,
-          lists: context.lists.filter((list) => list.listId !== event.listId),
+          lists: context.lists.map((list) =>
+            list.listId === event.listId
+              ? {
+                  ...list,
+                  productIds: list.productIds.filter(
+                    (productId) => productId !== event.productId
+                  ),
+                }
+              : list
+          ),
         };
       },
     }
