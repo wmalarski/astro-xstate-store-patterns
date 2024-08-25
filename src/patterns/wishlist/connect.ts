@@ -7,6 +7,8 @@ export const connect = (store: WishlistStore): MachineApi => {
     getAddFormProps(args) {
       return {
         onSubmit(event) {
+          event.preventDefault();
+
           const formData = new FormData(event.currentTarget);
           store.send({
             type: "add",
