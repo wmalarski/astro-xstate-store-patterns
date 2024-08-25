@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import type { FlatListStore } from "./store";
+import type { FlatListStore, FlatListStoreUpdatePositionsEvent } from "./store";
 
 export interface ItemProps {
   listId: string;
@@ -8,8 +8,12 @@ export interface ItemProps {
 
 export type MachineApi = {
   store: FlatListStore;
-  getAddListFormProps(): ComponentProps<"form">;
-  getAddToListFormProps(): ComponentProps<"form">;
-  getRemoveListButtonProps(listId: string): ComponentProps<"button">;
-  getRemoveFromListButtonProps(args: ItemProps): ComponentProps<"button">;
+  getAddListFormProps(
+    override?: ComponentProps<"form">
+  ): ComponentProps<"form">;
+  getRemoveListButtonProps(
+    listId: string,
+    override?: ComponentProps<"button">
+  ): ComponentProps<"button">;
+  updatePositions(args: FlatListStoreUpdatePositionsEvent): void;
 };

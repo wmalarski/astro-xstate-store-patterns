@@ -4,52 +4,36 @@ import type { MachineApi } from "./types";
 export const connect = (store: FlatListStore): MachineApi => {
   return {
     store,
-    getAddListFormProps() {
+    getAddListFormProps(override) {
       return {
         onSubmit(event) {
+          override?.onSubmit?.(event);
+
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
           store.send({
             type: "addList",
-            listId: crypto.randomUUID(),
-            name: formData.get("name") as string,
-          });
-        },
-      };
-    },
-    getAddToListFormProps() {
-      return {
-        onSubmit(event) {
-          event.preventDefault();
-          const formData = new FormData(event.currentTarget);
-          store.send({
-            type: "addToList",
             listId: formData.get("listId") as string,
-            productId: formData.get("productId") as string,
+            name: formData.get("name") as string,
+            position: formData.get("position") as string,
           });
         },
       };
     },
-    getRemoveFromListButtonProps({ listId, productId }) {
+    getRemoveListButtonProps(listId, override) {
       return {
-        onClick() {
-          store.send({
-            type: "removeFromList",
-            listId,
-            productId,
-          });
-        },
-      };
-    },
-    getRemoveListButtonProps(listId) {
-      return {
-        onClick() {
+        onClick(event) {
+          override?.onClick?.(event);
+
           store.send({
             type: "removeList",
             listId,
           });
         },
       };
+    },
+    updatePositions(args) {
+      store.send({ type: "updatePositions", ...args });
     },
   };
 };

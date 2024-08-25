@@ -3,19 +3,10 @@ import { createStore } from "@xstate/store";
 export type NestedProductGroup = {
   listId: string;
   name: string;
-  productIds: string[];
-  parentsIds: string[];
+  position: string[];
 };
 
-type CreateNestedStoreArgs = {
-  initialLists: NestedProductGroup[];
-};
-
-type NestedStoreAddListEvent = {
-  listId: string;
-  name: string;
-  parentsIds: string[];
-};
+type NestedStoreAddListEvent = NestedProductGroup;
 
 type NestedStoreAddToListEvent = {
   listId: string;
@@ -34,6 +25,10 @@ type NestedStoreRemoveListEvent = {
 type NestedStoreRemoveFromListEvent = {
   listId: string;
   productId: string;
+};
+
+type CreateNestedStoreArgs = {
+  initialLists: NestedProductGroup[];
 };
 
 export const createNestedStore = ({ initialLists }: CreateNestedStoreArgs) => {

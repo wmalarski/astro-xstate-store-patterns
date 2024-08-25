@@ -1,76 +1,58 @@
 import { createStore } from "@xstate/store";
 
-export type FlatListProductGroup = {
+type FlatListProductGroup = {
   listId: string;
   name: string;
-  productIds: string[];
+  position: string;
 };
 
-type FlatListStoreAddListEvent = {
-  listId: string;
-  name: string;
-};
-
-type FlatListStoreAddToListEvent = {
-  listId: string;
-  productId: string;
-};
+type FlatListStoreAddListEvent = FlatListProductGroup;
 
 type FlatListStoreRemoveListEvent = {
   listId: string;
 };
 
-type FlatListStoreRemoveFromListEvent = {
-  listId: string;
-  productId: string;
+export type FlatListStoreUpdatePositionsEvent = {
+  positions: Record<string, string>;
 };
 
 type CreateFlatListStoreArgs = {
-  initialLists?: FlatListProductGroup[];
+  initialLists?: Record<string, FlatListProductGroup>;
 };
 
 export const createFlatListStore = ({
   initialLists,
 }: CreateFlatListStoreArgs = {}) => {
   return createStore(
-    { lists: initialLists ?? [] },
+    { lists: initialLists ?? {} },
     {
       addList: (context, args: FlatListStoreAddListEvent) => {
-        return {
-          ...context,
-          lists: [...context.lists, { ...args, productIds: [] }],
-        };
-      },
-      addToList: (context, event: FlatListStoreAddToListEvent) => {
-        return {
-          ...context,
-          productIds: context.lists.map((list) =>
-            list.listId === event.listId
-              ? { ...list, productIds: [...list.productIds, event.productId] }
-              : list
-          ),
-        };
+        return { ...context, lists: { ...context.lists, [args.listId]: args } };
       },
       removeList: (context, event: FlatListStoreRemoveListEvent) => {
-        return {
-          ...context,
-          lists: context.lists.filter((list) => list.listId !== event.listId),
-        };
+        if (!(event.listId in context.lists)) {
+          return context;
+        }
+
+        const updated = { ...context.lists };
+        delete updated[event.listId];
+
+        return { ...context, lists: updated };
       },
-      removeFromList: (context, event: FlatListStoreRemoveFromListEvent) => {
-        return {
-          ...context,
-          lists: context.lists.map((list) =>
-            list.listId === event.listId
-              ? {
-                  ...list,
-                  productIds: list.productIds.filter(
-                    (productId) => productId !== event.productId
-                  ),
-                }
-              : list
-          ),
-        };
+      updatePositions: (context, event: FlatListStoreUpdatePositionsEvent) => {
+        const update = { ...context.lists };
+
+        Object.entries(event.positions).forEach(([listId, position]) => {
+          const list = update[listId];
+
+          if (!list) {
+            return;
+          }
+
+          update[listId] = { ...list, position };
+        });
+
+        return { ...context, lists: update };
       },
     }
   );
