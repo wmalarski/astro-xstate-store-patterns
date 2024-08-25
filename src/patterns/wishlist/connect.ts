@@ -4,37 +4,54 @@ import type { MachineApi } from "./types";
 export const connect = (store: WishlistStore): MachineApi => {
   return {
     store,
-    getAddFormProps(args) {
+    getAddListFormProps(override) {
       return {
         onSubmit(event) {
-          event.preventDefault();
+          override?.onSubmit?.(event);
 
+          event.preventDefault();
           const formData = new FormData(event.currentTarget);
           store.send({
-            type: "add",
-            productId: args.productId,
+            type: "addList",
             listId: formData.get("listId") as string,
-            note: formData.get("note") as string,
           });
         },
       };
     },
-    getChangeNoteInputProps(args) {
+    getAddProductFormProps(override) {
       return {
-        onChange(event) {
-          store.send({ type: "update", ...args, note: event.target.value });
+        onSubmit(event) {
+          override?.onSubmit?.(event);
+
+          event.preventDefault();
+          const formData = new FormData(event.currentTarget);
+          store.send({
+            type: "addList",
+            listId: formData.get("listId") as string,
+          });
         },
       };
     },
-    getRemoveButtonProps(args) {
+    getRemoveListButtonProps(args, override) {
       return {
-        onClick() {
-          store.send({ type: "remove", ...args });
+        onChange(event) {
+          override?.onChange?.(event);
+
+          store.send({ type: "removeList", ...args });
+        },
+      };
+    },
+    getRemoveProductButtonProps(args, override) {
+      return {
+        onClick(event) {
+          override?.onChange?.(event);
+
+          store.send({ type: "removeProduct", ...args });
         },
       };
     },
     updateProduct(args) {
-      store.send({ type: "update", ...args });
+      store.send({ type: "updateLists", ...args });
     },
   };
 };

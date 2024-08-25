@@ -1,5 +1,10 @@
 import type { ComponentProps } from "react";
-import type { WishlistStore, WishlistStoreUpdateEvent } from "./store";
+import type {
+  WishlistStore,
+  WishlistStoreRemoveListEvent,
+  WishlistStoreRemoveProductEvent,
+  WishlistStoreUpdateEvent,
+} from "./store";
 
 export interface ItemProps {
   productId: string;
@@ -7,8 +12,19 @@ export interface ItemProps {
 
 export type MachineApi = {
   store: WishlistStore;
-  getAddFormProps(props: ItemProps): ComponentProps<"form">;
-  getChangeNoteInputProps(props: ItemProps): ComponentProps<"input">;
-  getRemoveButtonProps(props: ItemProps): ComponentProps<"button">;
+  getAddListFormProps(
+    override?: ComponentProps<"form">
+  ): ComponentProps<"form">;
+  getAddProductFormProps(
+    override?: ComponentProps<"form">
+  ): ComponentProps<"form">;
+  getRemoveListButtonProps(
+    props: WishlistStoreRemoveListEvent,
+    override?: ComponentProps<"button">
+  ): ComponentProps<"button">;
+  getRemoveProductButtonProps(
+    props: WishlistStoreRemoveProductEvent,
+    override?: ComponentProps<"button">
+  ): ComponentProps<"button">;
   updateProduct: (props: WishlistStoreUpdateEvent) => void;
 };

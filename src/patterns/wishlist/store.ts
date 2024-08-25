@@ -1,70 +1,108 @@
 import { createStore } from "@xstate/store";
 
-type WishlistProductGroup = {
-  productId: string;
-  note: string;
+type WishlistStoreAddListEvent = {
   listId: string;
 };
 
-export type WishlistStoreAddEvent = WishlistProductGroup;
+type WishlistStoreAddProductEvent = {
+  productId: string;
+  listId: string;
+};
 
 export type WishlistStoreUpdateEvent = {
   productId: string;
-  note?: string;
-  listId?: string;
+  fromListId: string;
+  toListId: string;
 };
 
-export type WishlistStoreRemoveEvent = {
+export type WishlistStoreRemoveProductEvent = {
+  listId: string;
   productId: string;
 };
 
-type CreateWishlistStoreArgs = {
-  initialProductGroups?: WishlistProductGroup[];
+export type WishlistStoreRemoveListEvent = {
+  listId: string;
 };
 
-export const createWishlistStore = ({
-  initialProductGroups,
-}: CreateWishlistStoreArgs = {}) => {
+type CreateWishlistStoreArgs = {
+  initialLists?: Record<string, string[]>;
+};
+
+export const createWishlistStore = (args: CreateWishlistStoreArgs = {}) => {
   return createStore(
+    { lists: args.initialLists ?? {} },
     {
-      products: Object.fromEntries(
-        (initialProductGroups ?? []).map((product) => [
-          product.productId,
-          product,
-        ])
-      ),
-    },
-    {
-      add: (context, event: WishlistStoreAddEvent) => {
+      addList: (context, event: WishlistStoreAddListEvent) => {
         return {
           ...context,
-          products: { ...context.products, [event.productId]: event },
-        };
-      },
-      update: (context, event: WishlistStoreUpdateEvent) => {
-        const product = context.products[event.productId];
-
-        if (!product) {
-          return context;
-        }
-
-        return {
-          ...context,
-          products: {
-            ...context.products,
-            [event.productId]: { ...product, ...event },
+          lists: {
+            ...context.lists,
+            [event.listId]: [],
           },
         };
       },
-      remove: (context, event: WishlistStoreRemoveEvent) => {
-        if (!(event.productId in context.products)) {
+      addProduct: (context, event: WishlistStoreAddProductEvent) => {
+        const list = context.lists[event.listId] ?? [];
+
+        return {
+          ...context,
+          lists: {
+            ...context.lists,
+            [event.listId]: [...list, event.productId],
+          },
+        };
+      },
+      updateLists: (context, event: WishlistStoreUpdateEvent) => {
+        const fromList = context.lists[event.fromListId];
+
+        if (!fromList) {
           return context;
         }
 
-        const updated = { ...context.products };
-        delete updated[event.productId];
+        const updatedFromList = fromList.filter(
+          (productId) => productId !== event.productId
+        );
 
-        return { ...context, products: updated };
+        const toList = context.lists[event.toListId] ?? [];
+        const updatedToList = [...toList, event.productId];
+
+        return {
+          ...context,
+          lists: {
+            ...context.lists,
+            [event.fromListId]: updatedFromList,
+            [event.toListId]: updatedToList,
+          },
+        };
+      },
+      removeProduct: (context, event: WishlistStoreRemoveProductEvent) => {
+        const list = context.lists[event.listId];
+
+        if (!list) {
+          return context;
+        }
+
+        const updated = list.filter(
+          (productId) => productId !== event.productId
+        );
+
+        return {
+          ...context,
+          lists: {
+            ...context.lists,
+            [event.listId]: updated,
+          },
+        };
+      },
+      removeList: (context, event: WishlistStoreRemoveListEvent) => {
+        if (!(event.listId in context.lists)) {
+          return context;
+        }
+
+        const updated = { ...context.lists };
+        delete updated[event.listId];
+
+        return { ...context, lists: updated };
       },
     }
   );
