@@ -1,49 +1,70 @@
 import { createStore } from "@xstate/store";
 
-export type WishlistProductGroup = {
+type WishlistProductGroup = {
   productId: string;
   note: string;
+  listId: string;
+};
+
+export type WishlistStoreAddEvent = WishlistProductGroup;
+
+export type WishlistStoreUpdateEvent = {
+  productId: string;
+  note?: string;
+  listId?: string;
+};
+
+export type WishlistStoreRemoveEvent = {
+  productId: string;
 };
 
 type CreateWishlistStoreArgs = {
   initialProductGroups?: WishlistProductGroup[];
 };
 
-type CreateWishlistStoreAddEvent = WishlistProductGroup;
-
-type CreateWishlistStoreEditEvent = WishlistProductGroup;
-
-type CreateWishlistStoreRemoveEvent = {
-  productId: string;
-};
-
 export const createWishlistStore = ({
   initialProductGroups,
 }: CreateWishlistStoreArgs = {}) => {
   return createStore(
-    { productGroups: initialProductGroups ?? [] },
     {
-      add: (context, event: CreateWishlistStoreAddEvent) => {
+      products: Object.fromEntries(
+        (initialProductGroups ?? []).map((product) => [
+          product.productId,
+          product,
+        ])
+      ),
+    },
+    {
+      add: (context, event: WishlistStoreAddEvent) => {
         return {
           ...context,
-          productGroups: [...context.productGroups, event],
+          products: { ...context.products, [event.productId]: event },
         };
       },
-      edit: (context, event: CreateWishlistStoreEditEvent) => {
+      update: (context, event: WishlistStoreUpdateEvent) => {
+        const product = context.products[event.productId];
+
+        if (!product) {
+          return context;
+        }
+
         return {
           ...context,
-          productGroups: context.productGroups.map((product) =>
-            product.productId === event.productId ? event : product
-          ),
+          products: {
+            ...context.products,
+            [event.productId]: { ...product, ...event },
+          },
         };
       },
-      remove: (context, event: CreateWishlistStoreRemoveEvent) => {
-        return {
-          ...context,
-          productGroups: context.productGroups.filter(
-            (product) => product.productId !== event.productId
-          ),
-        };
+      remove: (context, event: WishlistStoreRemoveEvent) => {
+        if (!(event.productId in context.products)) {
+          return context;
+        }
+
+        const updated = { ...context.products };
+        delete updated[event.productId];
+
+        return { ...context, products: updated };
       },
     }
   );
