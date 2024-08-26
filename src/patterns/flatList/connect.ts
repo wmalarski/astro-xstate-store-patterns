@@ -20,7 +20,7 @@ export const connect = (store: FlatListStore): MachineApi => {
         },
       };
     },
-    getRemoveListButtonProps(listId, override) {
+    getRemoveListButtonProps({ listId }, override) {
       return {
         onClick(event) {
           override?.onClick?.(event);

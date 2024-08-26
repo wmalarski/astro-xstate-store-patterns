@@ -8,79 +8,49 @@ export type NestedProductGroup = {
 
 type NestedStoreAddListEvent = NestedProductGroup;
 
-type NestedStoreAddToListEvent = {
-  listId: string;
-  productId: string;
-};
-
-export type NestedStoreSetParentsEvent = {
-  listId: string;
-  parentsIds: string[];
-};
-
 type NestedStoreRemoveListEvent = {
   listId: string;
 };
 
-type NestedStoreRemoveFromListEvent = {
-  listId: string;
-  productId: string;
+export type NestedStoreUpdatePositionsEvent = {
+  positions: Record<string, string[]>;
 };
 
 type CreateNestedStoreArgs = {
-  initialLists: NestedProductGroup[];
+  initialLists: Record<string, NestedProductGroup>;
 };
 
 export const createNestedStore = ({ initialLists }: CreateNestedStoreArgs) => {
   return createStore(
     { lists: initialLists },
     {
-      addList: (context, event: NestedStoreAddListEvent) => {
-        return {
-          ...context,
-          lists: [...context.lists, { ...event, productIds: [] }],
-        };
-      },
-      addToList: (context, event: NestedStoreAddToListEvent) => {
-        return {
-          ...context,
-          productIds: context.lists.map((list) =>
-            list.listId === event.listId
-              ? { ...list, productIds: [...list.productIds, event.productId] }
-              : list
-          ),
-        };
-      },
-      setParents: (context, event: NestedStoreSetParentsEvent) => {
-        return {
-          ...context,
-          productIds: context.lists.map((list) =>
-            list.listId === event.listId
-              ? { ...list, parentsIds: event.parentsIds }
-              : list
-          ),
-        };
+      addList: (context, args: NestedStoreAddListEvent) => {
+        return { ...context, lists: { ...context.lists, [args.listId]: args } };
       },
       removeList: (context, event: NestedStoreRemoveListEvent) => {
-        return {
-          ...context,
-          lists: context.lists.filter((list) => list.listId !== event.listId),
-        };
+        if (!(event.listId in context.lists)) {
+          return context;
+        }
+
+        const updated = { ...context.lists };
+        delete updated[event.listId];
+
+        return { ...context, lists: updated };
       },
-      removeFromList: (context, event: NestedStoreRemoveFromListEvent) => {
-        return {
-          ...context,
-          lists: context.lists.map((list) =>
-            list.listId === event.listId
-              ? {
-                  ...list,
-                  productIds: list.productIds.filter(
-                    (productId) => productId !== event.productId
-                  ),
-                }
-              : list
-          ),
-        };
+      updatePositions: (context, event: NestedStoreUpdatePositionsEvent) => {
+        const update = { ...context.lists };
+
+        Object.entries(event.positions).forEach(([listId, position]) => {
+          const list = update[listId];
+
+          if (!list) {
+            return;
+          }
+
+          update[listId] = { ...list, position };
+        });
+
+        return { ...context, lists: update };
       },
     }
   );

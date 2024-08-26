@@ -18,11 +18,7 @@ export const React1Example: FC<React1ExampleProps> = ({ products }) => {
 
   return (
     <div>
-      <ProductList
-        products={products}
-        flatListApi={flatListApi}
-        wishlistApi={wishlistApi}
-      />
+      <ProductList products={products} wishlistApi={wishlistApi} />
       <FlatWishlist
         products={products}
         flatListApi={flatListApi}

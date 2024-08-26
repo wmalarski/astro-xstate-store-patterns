@@ -1,21 +1,47 @@
+import { useSelector } from "@xstate/store/react";
 import type { FC } from "react";
-import * as FlatList from "../../patterns/flatList";
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
+
+type AddProductToListProps = {
+  product: Product;
+  wishlistApi: Wishlist.MachineApi;
+};
+
+const AddProductToList: FC<AddProductToListProps> = ({
+  product,
+  wishlistApi,
+}) => {
+  const lists = useSelector(wishlistApi.store, ({ context }) => context.lists);
+
+  return (
+    <form {...wishlistApi.getAddProductFormProps()}>
+      <label>
+        List
+        <select name="listId">
+          {Object.keys(lists).map((listId) => (
+            <option key={listId}>{product.name}</option>
+          ))}
+        </select>
+      </label>
+      <button>Add Product to List</button>
+    </form>
+  );
+};
 
 type ProductItemProps = {
   product: Product;
   wishlistApi: Wishlist.MachineApi;
-  flatListApi: FlatList.MachineApi;
 };
 
-export const ProductItem: FC<ProductItemProps> = ({ product }) => {
+const ProductItem: FC<ProductItemProps> = ({ product, wishlistApi }) => {
   return (
     <li>
       <div>
         <span>{product.name}</span>
         <span>{product.price}</span>
       </div>
+      <AddProductToList product={product} wishlistApi={wishlistApi} />
     </li>
   );
 };
@@ -23,12 +49,10 @@ export const ProductItem: FC<ProductItemProps> = ({ product }) => {
 type ProductListProps = {
   products: Product[];
   wishlistApi: Wishlist.MachineApi;
-  flatListApi: FlatList.MachineApi;
 };
 
 export const ProductList: FC<ProductListProps> = ({
   products,
-  flatListApi,
   wishlistApi,
 }) => {
   return (
@@ -37,7 +61,6 @@ export const ProductList: FC<ProductListProps> = ({
         <ProductItem
           key={product.id}
           product={product}
-          flatListApi={flatListApi}
           wishlistApi={wishlistApi}
         />
       ))}

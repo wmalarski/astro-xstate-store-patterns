@@ -1,6 +1,6 @@
 import { createStore } from "@xstate/store";
 
-type FlatListProductGroup = {
+export type FlatListProductGroup = {
   listId: string;
   name: string;
   position: string;
@@ -8,7 +8,7 @@ type FlatListProductGroup = {
 
 type FlatListStoreAddListEvent = FlatListProductGroup;
 
-type FlatListStoreRemoveListEvent = {
+export type FlatListStoreRemoveListEvent = {
   listId: string;
 };
 
