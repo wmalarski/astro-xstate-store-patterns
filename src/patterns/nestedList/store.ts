@@ -17,12 +17,14 @@ export type NestedStoreUpdatePositionsEvent = {
 };
 
 type CreateNestedStoreArgs = {
-  initialLists: Record<string, NestedProductGroup>;
+  initialLists?: Record<string, NestedProductGroup>;
 };
 
-export const createNestedStore = ({ initialLists }: CreateNestedStoreArgs) => {
+export const createNestedStore = ({
+  initialLists,
+}: CreateNestedStoreArgs = {}) => {
   return createStore(
-    { lists: initialLists },
+    { lists: initialLists ?? {} },
     {
       addList: (context, args: NestedStoreAddListEvent) => {
         return { ...context, lists: { ...context.lists, [args.listId]: args } };
