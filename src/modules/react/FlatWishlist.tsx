@@ -33,14 +33,14 @@ const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
   );
 };
 
-type ProductItemProps = {
+type WishlistsGroupItemProps = {
   products: Record<string, Product>;
   productId: string;
   list: FlatListProductGroup;
   wishlistApi: Wishlist.MachineApi;
 };
 
-const ProductItem: FC<ProductItemProps> = ({
+const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
   list,
   productId,
   wishlistApi,
@@ -61,14 +61,14 @@ const ProductItem: FC<ProductItemProps> = ({
   );
 };
 
-type ProductListProps = {
+type WishlistsGroupProps = {
   products: Record<string, Product>;
   list: FlatListProductGroup;
   wishlistApi: Wishlist.MachineApi;
   flatListApi: FlatList.MachineApi;
 };
 
-const ProductList: FC<ProductListProps> = ({
+const WishlistsGroup: FC<WishlistsGroupProps> = ({
   flatListApi,
   list,
   wishlistApi,
@@ -92,7 +92,7 @@ const ProductList: FC<ProductListProps> = ({
       </button>
       <ul>
         {productIds?.map((productId) => (
-          <ProductItem
+          <WishlistsGroupItem
             key={productId}
             list={list}
             productId={productId}
@@ -105,13 +105,13 @@ const ProductList: FC<ProductListProps> = ({
   );
 };
 
-type ProductListsProps = {
+type WishlistsGroupsProps = {
   products: Product[];
   wishlistApi: Wishlist.MachineApi;
   flatListApi: FlatList.MachineApi;
 };
 
-const ProductLists: FC<ProductListsProps> = ({
+const WishlistsGroups: FC<WishlistsGroupsProps> = ({
   flatListApi,
   products,
   wishlistApi,
@@ -125,7 +125,7 @@ const ProductLists: FC<ProductListsProps> = ({
   return (
     <ul>
       {Object.values(lists).map((list) => (
-        <ProductList
+        <WishlistsGroup
           key={list.listId}
           flatListApi={flatListApi}
           products={productsMap}
@@ -151,7 +151,7 @@ export const FlatWishlist: FC<FlatWishlistProps> = ({
   return (
     <div>
       <AddListForm flatListApi={flatListApi} wishlistApi={wishlistApi} />
-      <ProductLists
+      <WishlistsGroups
         products={products}
         flatListApi={flatListApi}
         wishlistApi={wishlistApi}

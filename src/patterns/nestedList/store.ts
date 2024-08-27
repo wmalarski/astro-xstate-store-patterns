@@ -8,7 +8,7 @@ export type NestedProductGroup = {
 
 type NestedStoreAddListEvent = NestedProductGroup;
 
-type NestedStoreRemoveListEvent = {
+export type NestedStoreRemoveListEvent = {
   listId: string;
 };
 

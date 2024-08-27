@@ -1,5 +1,9 @@
 import type { ComponentProps } from "react";
-import type { NestedStore, NestedStoreUpdatePositionsEvent } from "./store";
+import type {
+  NestedStore,
+  NestedStoreRemoveListEvent,
+  NestedStoreUpdatePositionsEvent,
+} from "./store";
 
 export interface ItemProps {
   listId: string;
@@ -12,7 +16,7 @@ export type MachineApi = {
     override?: ComponentProps<"form">
   ): ComponentProps<"form">;
   getRemoveListButtonProps(
-    listId: string,
+    event: NestedStoreRemoveListEvent,
     override?: ComponentProps<"button">
   ): ComponentProps<"button">;
   updatePositions(args: NestedStoreUpdatePositionsEvent): void;

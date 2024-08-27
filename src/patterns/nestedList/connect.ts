@@ -20,14 +20,14 @@ export const connect = (store: NestedStore): MachineApi => {
         },
       };
     },
-    getRemoveListButtonProps(listId, override) {
+    getRemoveListButtonProps(args, override) {
       return {
         onClick(event) {
           override?.onClick?.(event);
 
           store.send({
             type: "removeList",
-            listId,
+            listId: args.listId,
           });
         },
       };
