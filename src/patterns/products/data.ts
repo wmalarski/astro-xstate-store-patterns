@@ -2,15 +2,13 @@ import { faker } from "@faker-js/faker";
 import type { Product } from "./types";
 
 export const getProduct = (): Product => {
-  const productName = faker.commerce.productName();
   return {
     id: faker.string.uuid(),
     name: faker.commerce.productName(),
     price: faker.commerce.price(),
-    image: faker.image.urlLoremFlickr({
-      category: "productName",
+    image: faker.image.urlPicsumPhotos({
       height: 200,
-      width: 300,
+      width: 350,
     }),
   };
 };

@@ -3,6 +3,13 @@ import type { FC } from "react";
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
 import { buttonRecipe } from "../../recipes/button";
+import {
+  cardBodyRecipe,
+  cardRecipe,
+  cardTitleRecipe,
+} from "../../recipes/card";
+import { formControlRecipe } from "../../recipes/formControl";
+import { labelRecipe, labelTextRecipe } from "../../recipes/label";
 import { selectRecipe } from "../../recipes/select";
 
 type AddProductToListProps = {
@@ -15,18 +22,37 @@ const AddProductToList: FC<AddProductToListProps> = ({
   wishlistApi,
 }) => {
   const lists = useSelector(wishlistApi.store, ({ context }) => context.lists);
+  const listKeys = Object.keys(lists);
 
   return (
-    <form {...wishlistApi.getAddProductFormProps()}>
-      <label>
-        List
-        <select required name="listId" className={selectRecipe()}>
-          {Object.keys(lists).map((listId) => (
+    <form
+      className="flex flex-col gap-2"
+      {...wishlistApi.getAddProductFormProps()}
+    >
+      <label className={formControlRecipe()}>
+        <div className={labelRecipe()}>
+          <span className={labelTextRecipe()}>Wishlist</span>
+        </div>
+        <select
+          required
+          name="listId"
+          disabled={listKeys.length < 1}
+          className={selectRecipe({ size: "sm", variant: "bordered" })}
+        >
+          <option value="" disabled selected>
+            Select your option
+          </option>
+          {listKeys.map((listId) => (
             <option key={listId}>{product.name}</option>
           ))}
         </select>
       </label>
-      <button className={buttonRecipe()}>Add Product to List</button>
+      <button
+        disabled={listKeys.length < 1}
+        className={buttonRecipe({ size: "sm" })}
+      >
+        Add Product to List
+      </button>
     </form>
   );
 };
@@ -38,12 +64,15 @@ type ProductItemProps = {
 
 const ProductItem: FC<ProductItemProps> = ({ product, wishlistApi }) => {
   return (
-    <li>
-      <div>
-        <span>{product.name}</span>
-        <span>{product.price}</span>
+    <li className={cardRecipe({ class: "shadow-md w-64", size: "compact" })}>
+      <figure>
+        <img src={product.image} alt={product.name} />
+      </figure>
+      <div className={cardBodyRecipe()}>
+        <h3 className={cardTitleRecipe()}>{product.name}</h3>
+        <strong>{product.price}</strong>
+        <AddProductToList product={product} wishlistApi={wishlistApi} />
       </div>
-      <AddProductToList product={product} wishlistApi={wishlistApi} />
     </li>
   );
 };
@@ -58,14 +87,17 @@ export const ProductList: FC<ProductListProps> = ({
   wishlistApi,
 }) => {
   return (
-    <ul>
-      {products.map((product) => (
-        <ProductItem
-          key={product.id}
-          product={product}
-          wishlistApi={wishlistApi}
-        />
-      ))}
-    </ul>
+    <section className="flex flex-col gap-4">
+      <h2 className="text-2xl">Product List</h2>
+      <ul className="flex gap-4 flex-col">
+        {products.map((product) => (
+          <ProductItem
+            key={product.id}
+            product={product}
+            wishlistApi={wishlistApi}
+          />
+        ))}
+      </ul>
+    </section>
   );
 };
