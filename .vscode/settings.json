@@ -23,5 +23,5 @@
   "[astro]": {
     "editor.defaultFormatter": "astro-build.astro-vscode"
   },
-  "cSpell.words": ["astro", "astrojs", "xstate"]
+  "cSpell.words": ["astro", "astrojs", "tailwindcss", "xstate"]
 }
