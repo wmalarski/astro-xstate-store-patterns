@@ -15,7 +15,7 @@ export const React2Example: FC<React2ExampleProps> = ({ products }) => {
   const nestedListApi = NestedList.connect(nestedStore);
 
   return (
-    <div>
+    <div className="grid grid-cols-2 gap-2 justify-items-center">
       <ProductList products={products} wishlistApi={wishlistApi} />
       <NestedWishlist
         products={products}

@@ -1,5 +1,6 @@
 import { useSelector } from "@xstate/store/react";
-import { useId, useMemo, type FC } from "react";
+import { nanoid } from "nanoid";
+import { useMemo, type FC } from "react";
 import * as NestedList from "../../patterns/nestedList";
 import {
   getListGroup,
@@ -20,8 +21,6 @@ const AddListForm: FC<AddListFormProps> = ({
   wishlistApi,
   group,
 }) => {
-  const listId = useId();
-
   // const parents = useSelector(nestedListApi.store, ({ context }) =>
   //   parentListId
   //     ? Object.keys(context.lists).length + 1
@@ -32,7 +31,7 @@ const AddListForm: FC<AddListFormProps> = ({
     <form
       {...nestedListApi.getAddListFormProps(wishlistApi.getAddListFormProps())}
     >
-      <input type="hidden" name="listId" value={listId} />
+      <input type="hidden" name="listId" value={nanoid()} />
       <input type="hidden" name="position" value={group?.parents.join("/")} />
       <label>
         Name
@@ -178,9 +177,12 @@ const WishlistsRoot: FC<WishlistsRootProps> = ({
 
   const root = useMemo(() => getListGroup(Object.values(lists)), [lists]);
 
-  const productsMap = useMemo(() => {
-    return Object.fromEntries(products.map((product) => [product.id, product]));
-  }, [products]);
+  const productsMap = useMemo(
+    () => Object.fromEntries(products.map((product) => [product.id, product])),
+    [products]
+  );
+
+  console.log({ root });
 
   return (
     <Wishlists
@@ -204,13 +206,13 @@ export const NestedWishlist: FC<NestedWishlistProps> = ({
   wishlistApi,
 }) => {
   return (
-    <div>
-      <AddListForm nestedListApi={nestedListApi} wishlistApi={wishlistApi} />
+    <section className="flex flex-col gap-4">
+      <h2 className="text-2xl">Nested Wishlist</h2>
       <WishlistsRoot
         products={products}
         nestedListApi={nestedListApi}
         wishlistApi={wishlistApi}
       />
-    </div>
+    </section>
   );
 };
