@@ -7,6 +7,7 @@ import {
 } from "../../patterns/nestedList/utils";
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
+import { buttonRecipe } from "../../recipes/button";
 
 type AddListFormProps = {
   nestedListApi: NestedList.MachineApi;
@@ -37,7 +38,7 @@ const AddListForm: FC<AddListFormProps> = ({
         Name
         <input type="text" name="name" />
       </label>
-      <button>Add list</button>
+      <button className={buttonRecipe()}>Add list</button>
     </form>
   );
 };
@@ -59,6 +60,7 @@ const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
     <li>
       <span>{products[productId]?.name}</span>
       <button
+        className={buttonRecipe()}
         {...wishlistApi.getRemoveProductButtonProps({
           listId: list.listId,
           productId,
@@ -92,6 +94,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
     <li>
       <span>{group.name}</span>
       <button
+        className={buttonRecipe()}
         {...wishlistApi.getRemoveListButtonProps(
           group,
           nestedListApi.getRemoveListButtonProps(group)

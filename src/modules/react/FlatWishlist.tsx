@@ -4,6 +4,7 @@ import type { FlatListProductGroup } from "../../patterns/flatList";
 import * as FlatList from "../../patterns/flatList";
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
+import { buttonRecipe } from "../../recipes/button";
 
 type AddListFormProps = {
   flatListApi: FlatList.MachineApi;
@@ -28,7 +29,7 @@ const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
         Name
         <input type="text" name="name" />
       </label>
-      <button className="btn">Add list</button>
+      <button className={buttonRecipe()}>Add list</button>
     </form>
   );
 };
@@ -50,6 +51,7 @@ const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
     <li>
       <span>{products[productId]?.name}</span>
       <button
+        className={buttonRecipe()}
         {...wishlistApi.getRemoveProductButtonProps({
           listId: list.listId,
           productId,
@@ -83,6 +85,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
     <div>
       <span>{list.name}</span>
       <button
+        className={buttonRecipe()}
         {...wishlistApi.getRemoveListButtonProps(
           list,
           flatListApi.getRemoveListButtonProps(list)

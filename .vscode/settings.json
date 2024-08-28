@@ -23,5 +23,12 @@
   "[astro]": {
     "editor.defaultFormatter": "astro-build.astro-vscode"
   },
-  "cSpell.words": ["astro", "astrojs", "daisyui", "tailwindcss", "xstate"]
+  "cSpell.words": [
+    "astro",
+    "astrojs",
+    "daisyui",
+    "Flickr",
+    "tailwindcss",
+    "xstate"
+  ]
 }

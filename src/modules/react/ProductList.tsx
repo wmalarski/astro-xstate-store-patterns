@@ -2,6 +2,8 @@ import { useSelector } from "@xstate/store/react";
 import type { FC } from "react";
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
+import { buttonRecipe } from "../../recipes/button";
+import { selectRecipe } from "../../recipes/select";
 
 type AddProductToListProps = {
   product: Product;
@@ -18,13 +20,13 @@ const AddProductToList: FC<AddProductToListProps> = ({
     <form {...wishlistApi.getAddProductFormProps()}>
       <label>
         List
-        <select name="listId">
+        <select required name="listId" className={selectRecipe()}>
           {Object.keys(lists).map((listId) => (
             <option key={listId}>{product.name}</option>
           ))}
         </select>
       </label>
-      <button>Add Product to List</button>
+      <button className={buttonRecipe()}>Add Product to List</button>
     </form>
   );
 };
