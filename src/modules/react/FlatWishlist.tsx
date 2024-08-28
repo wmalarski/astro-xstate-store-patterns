@@ -28,7 +28,7 @@ const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
         Name
         <input type="text" name="name" />
       </label>
-      <button>Add list</button>
+      <button className="btn">Add list</button>
     </form>
   );
 };
