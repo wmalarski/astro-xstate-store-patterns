@@ -11,10 +11,9 @@ export const connect = (store: WishlistStore): MachineApi => {
 
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          store.send({
-            type: "addList",
-            listId: formData.get("listId") as string,
-          });
+          const listId = formData.get("listId") as string;
+
+          store.send({ type: "addList", listId });
         },
       };
     },
@@ -26,18 +25,19 @@ export const connect = (store: WishlistStore): MachineApi => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
           store.send({
-            type: "addList",
+            type: "addProduct",
             listId: formData.get("listId") as string,
+            productId: formData.get("productId") as string,
           });
         },
       };
     },
-    getRemoveListButtonProps(args, override) {
+    getRemoveListButtonProps({ listId }, override) {
       return {
-        onChange(event) {
-          override?.onChange?.(event);
+        onClick(event) {
+          override?.onClick?.(event);
 
-          store.send({ type: "removeList", ...args });
+          store.send({ type: "removeList", listId });
         },
       };
     },

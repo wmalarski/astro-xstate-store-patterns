@@ -29,6 +29,7 @@ const AddProductToList: FC<AddProductToListProps> = ({
       className="flex flex-col gap-2"
       {...wishlistApi.getAddProductFormProps()}
     >
+      <input name="productId" type="hidden" value={product.id} />
       <label className={formControlRecipe()}>
         <div className={labelRecipe()}>
           <span className={labelTextRecipe()}>Wishlist</span>
@@ -36,14 +37,15 @@ const AddProductToList: FC<AddProductToListProps> = ({
         <select
           required
           name="listId"
+          defaultValue=""
           disabled={listKeys.length < 1}
           className={selectRecipe({ size: "sm", variant: "bordered" })}
         >
-          <option value="" disabled selected>
+          <option value="" disabled>
             Select your option
           </option>
           {listKeys.map((listId) => (
-            <option key={listId}>{product.name}</option>
+            <option key={listId}>{listId}</option>
           ))}
         </select>
       </label>

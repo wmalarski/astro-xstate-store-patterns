@@ -30,6 +30,8 @@ export const createFlatListStore = ({
         return { ...context, lists: { ...context.lists, [args.listId]: args } };
       },
       removeList: (context, event: FlatListStoreRemoveListEvent) => {
+        console.log("flatList", { context, event });
+
         if (!(event.listId in context.lists)) {
           return context;
         }

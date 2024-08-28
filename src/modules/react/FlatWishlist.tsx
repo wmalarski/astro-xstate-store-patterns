@@ -1,10 +1,20 @@
 import { useSelector } from "@xstate/store/react";
-import { useId, useMemo, type FC } from "react";
+import { nanoid } from "nanoid";
+import { useMemo, type FC } from "react";
 import type { FlatListProductGroup } from "../../patterns/flatList";
 import * as FlatList from "../../patterns/flatList";
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
 import { buttonRecipe } from "../../recipes/button";
+import {
+  cardActionsRecipe,
+  cardBodyRecipe,
+  cardRecipe,
+  cardTitleRecipe,
+} from "../../recipes/card";
+import { formControlRecipe } from "../../recipes/formControl";
+import { labelRecipe, labelTextRecipe } from "../../recipes/label";
+import { textFieldClass as textFieldRecipe } from "../../recipes/textField";
 
 type AddListFormProps = {
   flatListApi: FlatList.MachineApi;
@@ -12,8 +22,6 @@ type AddListFormProps = {
 };
 
 const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
-  const listId = useId();
-
   const position = useSelector(
     wishlistApi.store,
     ({ context }) => Object.keys(context.lists).length + 1
@@ -21,15 +29,23 @@ const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
 
   return (
     <form
+      className="flex flex-col gap-2"
       {...flatListApi.getAddListFormProps(wishlistApi.getAddListFormProps())}
     >
-      <input type="hidden" name="listId" value={listId} />
+      <h3>Add Wishlist</h3>
+      <input type="hidden" name="listId" value={nanoid()} />
       <input type="hidden" name="position" value={position} />
-      <label>
-        Name
-        <input type="text" name="name" />
+      <label className={formControlRecipe()}>
+        <div className={labelRecipe()}>
+          <span className={labelTextRecipe()}>Name</span>
+        </div>
+        <input
+          className={textFieldRecipe({ variant: "bordered", size: "sm" })}
+          type="text"
+          name="name"
+        />
       </label>
-      <button className={buttonRecipe()}>Add list</button>
+      <button className={buttonRecipe({ size: "sm" })}>Add list</button>
     </form>
   );
 };
@@ -47,18 +63,29 @@ const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
   wishlistApi,
   products,
 }) => {
+  const product = products[productId];
+
+  if (!product) {
+    return null;
+  }
+
   return (
-    <li>
-      <span>{products[productId]?.name}</span>
-      <button
-        className={buttonRecipe()}
-        {...wishlistApi.getRemoveProductButtonProps({
-          listId: list.listId,
-          productId,
-        })}
-      >
-        Remove from List
-      </button>
+    <li className={cardRecipe({ class: "shadow-md", size: "side" })}>
+      <figure>
+        <img src={product.image} alt={product.name} />
+      </figure>
+      <div className={cardBodyRecipe()}>
+        <span>{products[productId]?.name}</span>
+        <button
+          className={buttonRecipe()}
+          {...wishlistApi.getRemoveProductButtonProps({
+            listId: list.listId,
+            productId,
+          })}
+        >
+          Remove from List
+        </button>
+      </div>
     </li>
   );
 };
@@ -82,28 +109,33 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
   );
 
   return (
-    <div>
-      <span>{list.name}</span>
-      <button
-        className={buttonRecipe()}
-        {...wishlistApi.getRemoveListButtonProps(
-          list,
-          flatListApi.getRemoveListButtonProps(list)
-        )}
-      >
-        Remove List
-      </button>
-      <ul>
-        {productIds?.map((productId) => (
-          <WishlistsGroupItem
-            key={productId}
-            list={list}
-            productId={productId}
-            products={products}
-            wishlistApi={wishlistApi}
-          />
-        ))}
-      </ul>
+    <div className={cardRecipe({ class: "shadow-md", size: "compact" })}>
+      <div className={cardBodyRecipe()}>
+        <h3 className={cardTitleRecipe()}>{list.name}</h3>
+        <ul>
+          {productIds?.map((productId) => (
+            <WishlistsGroupItem
+              key={productId}
+              list={list}
+              productId={productId}
+              products={products}
+              wishlistApi={wishlistApi}
+            />
+          ))}
+        </ul>
+        <div className={cardActionsRecipe()}>
+          <button
+            type="button"
+            className={buttonRecipe({ size: "sm" })}
+            {...wishlistApi.getRemoveListButtonProps(
+              list,
+              flatListApi.getRemoveListButtonProps(list)
+            )}
+          >
+            Remove List
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
@@ -152,13 +184,14 @@ export const FlatWishlist: FC<FlatWishlistProps> = ({
   wishlistApi,
 }) => {
   return (
-    <div>
+    <section className="flex flex-col gap-4">
+      <h2 className="text-2xl">Flat Wishlist</h2>
       <AddListForm flatListApi={flatListApi} wishlistApi={wishlistApi} />
       <WishlistsGroups
         products={products}
         flatListApi={flatListApi}
         wishlistApi={wishlistApi}
       />
-    </div>
+    </section>
   );
 };

@@ -10,13 +10,13 @@ export const connect = (store: FlatListStore): MachineApi => {
           override?.onSubmit?.(event);
 
           event.preventDefault();
+
           const formData = new FormData(event.currentTarget);
-          store.send({
-            type: "addList",
-            listId: formData.get("listId") as string,
-            name: formData.get("name") as string,
-            position: formData.get("position") as string,
-          });
+          const listId = formData.get("listId") as string;
+          const name = formData.get("name") as string;
+          const position = formData.get("position") as string;
+
+          store.send({ type: "addList", listId, name, position });
         },
       };
     },

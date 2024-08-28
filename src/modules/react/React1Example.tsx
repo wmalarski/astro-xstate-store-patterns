@@ -15,7 +15,7 @@ export const React1Example: FC<React1ExampleProps> = ({ products }) => {
   const flatListApi = FlatList.connect(flatListStore);
 
   return (
-    <div>
+    <div className="grid grid-cols-2 gap-2 justify-items-center">
       <ProductList products={products} wishlistApi={wishlistApi} />
       <FlatWishlist
         products={products}

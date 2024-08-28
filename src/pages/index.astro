@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { React1Example } from "../modules/react/React1Example";
+import { React2Example } from "../modules/react/React2Example";
 import { getProducts } from "../patterns/products/data";
 
 const data = getProducts().products;
@@ -9,6 +10,6 @@ const data = getProducts().products;
 <Layout title="Welcome to Wishlists.">
   <main class="grid grid-cols-2 p-4">
     <React1Example client:load products={data} />
-    <React1Example client:load products={data} />
+    <React2Example client:load products={data} />
   </main>
 </Layout>

@@ -6,11 +6,11 @@ import { nestedStore, wishlistStore } from "../stores";
 import { NestedWishlist } from "./NestedWishlist";
 import { ProductList } from "./ProductList";
 
-type React1ExampleProps = {
+type React2ExampleProps = {
   products: Product[];
 };
 
-export const React1Example: FC<React1ExampleProps> = ({ products }) => {
+export const React2Example: FC<React2ExampleProps> = ({ products }) => {
   const wishlistApi = Wishlist.connect(wishlistStore);
   const nestedListApi = NestedList.connect(nestedStore);
 

@@ -95,6 +95,8 @@ export const createWishlistStore = (args: CreateWishlistStoreArgs = {}) => {
         };
       },
       removeList: (context, event: WishlistStoreRemoveListEvent) => {
+        console.log("wishlist", { context, event });
+
         if (!(event.listId in context.lists)) {
           return context;
         }
