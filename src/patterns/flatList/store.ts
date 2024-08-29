@@ -26,8 +26,11 @@ export const createFlatListStore = ({
   return createStore(
     { lists: initialLists ?? {} },
     {
-      addList: (context, args: FlatListStoreAddListEvent) => {
-        return { ...context, lists: { ...context.lists, [args.listId]: args } };
+      addList: (context, event: FlatListStoreAddListEvent) => {
+        return {
+          ...context,
+          lists: { ...context.lists, [event.listId]: event },
+        };
       },
       removeList: (context, event: FlatListStoreRemoveListEvent) => {
         console.log("flatList", { context, event });
