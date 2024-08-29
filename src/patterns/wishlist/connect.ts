@@ -10,10 +10,12 @@ export const connect = (store: WishlistStore): MachineApi => {
           override?.onSubmit?.(event);
 
           event.preventDefault();
+
           const formData = new FormData(event.currentTarget);
           const listId = formData.get("listId") as string;
+          const name = formData.get("name") as string;
 
-          store.send({ type: "addList", listId });
+          store.send({ type: "addList", listId, name });
         },
       };
     },

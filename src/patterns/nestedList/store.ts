@@ -2,7 +2,6 @@ import { createStore } from "@xstate/store";
 
 export type NestedProductGroup = {
   listId: string;
-  name: string;
   position: string[];
 };
 

@@ -84,14 +84,14 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
   wishlistApi,
   products,
 }) => {
-  const productIds = useSelector(
+  const wishlist = useSelector(
     wishlistApi.store,
     ({ context }) => context.lists[group.listId]
   );
 
   return (
     <li>
-      <span>{group.name}</span>
+      <span>{wishlist?.name}</span>
       <button
         className={buttonRecipe()}
         {...wishlistApi.getRemoveListButtonProps(
@@ -102,7 +102,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
         Remove List
       </button>
       <ul>
-        {productIds?.map((productId) => (
+        {wishlist?.productIds.map((productId) => (
           <WishlistsGroupItem
             key={productId}
             list={group}
@@ -181,8 +181,6 @@ const WishlistsRoot: FC<WishlistsRootProps> = ({
     () => Object.fromEntries(products.map((product) => [product.id, product])),
     [products]
   );
-
-  console.log({ root });
 
   return (
     <Wishlists

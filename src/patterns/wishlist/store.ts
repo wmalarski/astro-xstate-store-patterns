@@ -2,6 +2,7 @@ import { createStore } from "@xstate/store";
 
 type WishlistStoreAddListEvent = {
   listId: string;
+  name: string;
 };
 
 type WishlistStoreAddProductEvent = {
@@ -24,8 +25,13 @@ export type WishlistStoreRemoveListEvent = {
   listId: string;
 };
 
+export type WishlistStoreList = {
+  productIds: string[];
+  name: string;
+};
+
 type CreateWishlistStoreArgs = {
-  initialLists?: Record<string, string[]>;
+  initialLists?: Record<string, WishlistStoreList>;
 };
 
 export const createWishlistStore = (args: CreateWishlistStoreArgs = {}) => {
@@ -37,41 +43,48 @@ export const createWishlistStore = (args: CreateWishlistStoreArgs = {}) => {
           ...context,
           lists: {
             ...context.lists,
-            [event.listId]: [],
+            [event.listId]: { name: event.name, productIds: [] },
           },
         };
       },
       addProduct: (context, event: WishlistStoreAddProductEvent) => {
-        const list = context.lists[event.listId] ?? [];
+        const list = context.lists[event.listId];
+
+        if (!list) {
+          return context;
+        }
 
         return {
           ...context,
           lists: {
             ...context.lists,
-            [event.listId]: [...list, event.productId],
+            [event.listId]: {
+              ...list,
+              productIds: [...list.productIds, event.productId],
+            },
           },
         };
       },
       updateLists: (context, event: WishlistStoreUpdateEvent) => {
         const fromList = context.lists[event.fromListId];
+        const toList = context.lists[event.toListId];
 
-        if (!fromList) {
+        if (!fromList || !toList) {
           return context;
         }
 
-        const updatedFromList = fromList.filter(
+        const updatedFromList = fromList.productIds.filter(
           (productId) => productId !== event.productId
         );
 
-        const toList = context.lists[event.toListId] ?? [];
-        const updatedToList = [...toList, event.productId];
+        const updatedToList = [...toList.productIds, event.productId];
 
         return {
           ...context,
           lists: {
             ...context.lists,
-            [event.fromListId]: updatedFromList,
-            [event.toListId]: updatedToList,
+            [event.fromListId]: { ...fromList, updatedFromList },
+            [event.toListId]: { ...toList, updatedToList },
           },
         };
       },
@@ -82,7 +95,7 @@ export const createWishlistStore = (args: CreateWishlistStoreArgs = {}) => {
           return context;
         }
 
-        const updated = list.filter(
+        const updated = list.productIds.filter(
           (productId) => productId !== event.productId
         );
 
@@ -90,13 +103,11 @@ export const createWishlistStore = (args: CreateWishlistStoreArgs = {}) => {
           ...context,
           lists: {
             ...context.lists,
-            [event.listId]: updated,
+            [event.listId]: { ...list, productIds: updated },
           },
         };
       },
       removeList: (context, event: WishlistStoreRemoveListEvent) => {
-        console.log("wishlist", { context, event });
-
         if (!(event.listId in context.lists)) {
           return context;
         }

@@ -13,10 +13,9 @@ export const connect = (store: FlatListStore): MachineApi => {
 
           const formData = new FormData(event.currentTarget);
           const listId = formData.get("listId") as string;
-          const name = formData.get("name") as string;
           const position = formData.get("position") as string;
 
-          store.send({ type: "addList", listId, name, position });
+          store.send({ type: "addList", listId, position });
         },
       };
     },

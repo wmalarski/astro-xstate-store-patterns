@@ -103,7 +103,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
   wishlistApi,
   products,
 }) => {
-  const productIds = useSelector(
+  const wishlist = useSelector(
     wishlistApi.store,
     ({ context }) => context.lists[list.listId]
   );
@@ -111,9 +111,9 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
   return (
     <div className={cardRecipe({ class: "shadow-md", size: "compact" })}>
       <div className={cardBodyRecipe()}>
-        <h3 className={cardTitleRecipe()}>{list.name}</h3>
+        <h3 className={cardTitleRecipe()}>{wishlist?.name}</h3>
         <ul>
-          {productIds?.map((productId) => (
+          {wishlist?.productIds?.map((productId) => (
             <WishlistsGroupItem
               key={productId}
               list={list}

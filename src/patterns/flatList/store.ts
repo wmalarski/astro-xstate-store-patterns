@@ -2,7 +2,6 @@ import { createStore } from "@xstate/store";
 
 export type FlatListProductGroup = {
   listId: string;
-  name: string;
   position: string;
 };
 
@@ -33,8 +32,6 @@ export const createFlatListStore = ({
         };
       },
       removeList: (context, event: FlatListStoreRemoveListEvent) => {
-        console.log("flatList", { context, event });
-
         if (!(event.listId in context.lists)) {
           return context;
         }
