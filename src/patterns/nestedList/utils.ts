@@ -1,3 +1,4 @@
+import type { WishlistStoreList } from "../wishlist";
 import type { NestedProductGroup } from "./store";
 
 export type GetListGroupResult = {
@@ -39,6 +40,70 @@ const groupByPosition = (
   return { children, current, parents };
 };
 
-export const getListGroup = (groups: NestedProductGroup[]) => {
-  return groupByPosition(groups, []);
+// const groupByPosition2 = (
+//   groups: NestedProductGroup[],
+//   parents: string[]
+// ): GetListGroupResult => {
+
+//   return { children, current, parents };
+// };
+
+export type GetListGroupData = {
+  listId: string | null;
+  current: WishlistStoreList[];
+  children: Record<string, GetListGroupData>;
+};
+
+// export type GetListGroupRoot = {
+//   current: WishlistStoreList[];
+//   children: Record<string, GetListGroupData>;
+// };
+
+export const getListGroup = (
+  wishlists: Record<string, WishlistStoreList>,
+  nested: Record<string, NestedProductGroup>
+) => {
+  const result: GetListGroupData = {
+    children: {},
+    current: [],
+    listId: null,
+  };
+
+  const deepAssign = (
+    wishlist: WishlistStoreList,
+    path: string[],
+    data: GetListGroupData
+  ) => {
+    const [current, ...rest] = path;
+
+    if (!current) {
+      data.current.push(wishlist);
+      return;
+    }
+
+    const child = data.children[current];
+
+    if (child) {
+      deepAssign(wishlist, rest, child);
+      return;
+    }
+
+    const newChild = { children: {}, current: [], listId: current };
+    data.children[current] = newChild;
+
+    deepAssign(wishlist, rest, newChild);
+  };
+
+  Object.values(wishlists).forEach((wishlist) => {
+    const nestedList = nested[wishlist.listId];
+
+    if (!nestedList) {
+      result.current.push(wishlist);
+      return;
+    }
+
+    deepAssign(wishlist, nestedList.position, result);
+  });
+
+  return result;
 };

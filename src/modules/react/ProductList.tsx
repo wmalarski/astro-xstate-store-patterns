@@ -22,7 +22,7 @@ const AddProductToList: FC<AddProductToListProps> = ({
   wishlistApi,
 }) => {
   const lists = useSelector(wishlistApi.store, ({ context }) => context.lists);
-  const listKeys = Object.keys(lists);
+  const listKeys = Object.values(lists);
 
   return (
     <form
@@ -44,8 +44,10 @@ const AddProductToList: FC<AddProductToListProps> = ({
           <option value="" disabled>
             Select your option
           </option>
-          {listKeys.map((listId) => (
-            <option key={listId}>{listId}</option>
+          {listKeys.map((list) => (
+            <option key={list.listId} value={list.listId}>
+              {list.name}
+            </option>
           ))}
         </select>
       </label>

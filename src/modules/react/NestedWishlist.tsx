@@ -4,6 +4,7 @@ import { useMemo, type FC } from "react";
 import * as NestedList from "../../patterns/nestedList";
 import {
   getListGroup,
+  type GetListGroupData,
   type GetListGroupResult,
 } from "../../patterns/nestedList/utils";
 import type { Product } from "../../patterns/products/types";
@@ -73,7 +74,7 @@ const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
 
 type WishlistsGroupProps = {
   products: Record<string, Product>;
-  group: NestedList.NestedProductGroup;
+  group: GetListGroupData;
   wishlistApi: Wishlist.MachineApi;
   nestedListApi: NestedList.MachineApi;
 };
@@ -118,7 +119,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
 
 type WishlistsProps = {
   products: Record<string, Product>;
-  group: GetListGroupResult;
+  group: GetListGroupData;
   wishlistApi: Wishlist.MachineApi;
   nestedListApi: NestedList.MachineApi;
 };
@@ -144,7 +145,7 @@ const Wishlists: FC<WishlistsProps> = ({
       </ul>
       <AddListForm nestedListApi={nestedListApi} wishlistApi={wishlistApi} />
       <ul>
-        {group.children.map((child) => (
+        {Object.values(group.children).map((child) => (
           <li key={child.parents.join("/")}>
             <Wishlists
               group={child}
@@ -170,12 +171,20 @@ const WishlistsRoot: FC<WishlistsRootProps> = ({
   products,
   wishlistApi,
 }) => {
-  const lists = useSelector(
+  const wishlists = useSelector(
+    wishlistApi.store,
+    ({ context }) => context.lists
+  );
+
+  const nestedLists = useSelector(
     nestedListApi.store,
     ({ context }) => context.lists
   );
 
-  const root = useMemo(() => getListGroup(Object.values(lists)), [lists]);
+  const root = useMemo(
+    () => getListGroup(wishlists, nestedLists),
+    [wishlists, nestedLists]
+  );
 
   const productsMap = useMemo(
     () => Object.fromEntries(products.map((product) => [product.id, product])),

@@ -1,9 +1,9 @@
 import { useSelector } from "@xstate/store/react";
 import { nanoid } from "nanoid";
 import { useMemo, type FC } from "react";
-import type { FlatListProductGroup } from "../../patterns/flatList";
 import * as FlatList from "../../patterns/flatList";
 import type { Product } from "../../patterns/products/types";
+import type { WishlistStoreList } from "../../patterns/wishlist";
 import * as Wishlist from "../../patterns/wishlist";
 import { buttonRecipe } from "../../recipes/button";
 import {
@@ -53,7 +53,7 @@ const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
 type WishlistsGroupItemProps = {
   products: Record<string, Product>;
   productId: string;
-  list: FlatListProductGroup;
+  list: WishlistStoreList;
   wishlistApi: Wishlist.MachineApi;
 };
 
@@ -92,7 +92,7 @@ const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
 
 type WishlistsGroupProps = {
   products: Record<string, Product>;
-  list: FlatListProductGroup;
+  list: WishlistStoreList;
   wishlistApi: Wishlist.MachineApi;
   flatListApi: FlatList.MachineApi;
 };
@@ -151,7 +151,7 @@ const WishlistsGroups: FC<WishlistsGroupsProps> = ({
   products,
   wishlistApi,
 }) => {
-  const lists = useSelector(flatListApi.store, ({ context }) => context.lists);
+  const lists = useSelector(wishlistApi.store, ({ context }) => context.lists);
 
   const productsMap = useMemo(() => {
     return Object.fromEntries(products.map((product) => [product.id, product]));
@@ -159,9 +159,9 @@ const WishlistsGroups: FC<WishlistsGroupsProps> = ({
 
   return (
     <ul>
-      {Object.values(lists).map((list) => (
+      {Object.entries(lists).map(([listId, list]) => (
         <WishlistsGroup
-          key={list.listId}
+          key={listId}
           flatListApi={flatListApi}
           products={productsMap}
           wishlistApi={wishlistApi}

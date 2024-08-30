@@ -26,6 +26,7 @@ export type WishlistStoreRemoveListEvent = {
 };
 
 export type WishlistStoreList = {
+  listId: string;
   productIds: string[];
   name: string;
 };
@@ -43,7 +44,7 @@ export const createWishlistStore = (args: CreateWishlistStoreArgs = {}) => {
           ...context,
           lists: {
             ...context.lists,
-            [event.listId]: { name: event.name, productIds: [] },
+            [event.listId]: { ...event, productIds: [] },
           },
         };
       },
