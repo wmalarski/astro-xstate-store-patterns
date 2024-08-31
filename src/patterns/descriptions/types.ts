@@ -1,5 +1,5 @@
 import type { MachineComponentProps } from "../types";
-import type { DescriptionsStore, DescriptionsStoreRemoveEvent } from "./store";
+import type { DescriptionsStore } from "./store";
 
 export interface ItemProps {
   listId: string;
@@ -11,8 +11,4 @@ export type MachineApi = {
   getSetDescriptionFormProps(
     override?: MachineComponentProps["form"]
   ): MachineComponentProps["form"];
-  getRemoveDescriptionButtonProps(
-    props: DescriptionsStoreRemoveEvent,
-    override?: MachineComponentProps["button"]
-  ): MachineComponentProps["button"];
 };

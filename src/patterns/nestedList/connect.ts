@@ -21,18 +21,6 @@ export const connect = (store: NestedStore): MachineApi => {
         },
       };
     },
-    getRemoveListButtonProps(args, override) {
-      return {
-        onClick(event) {
-          override?.onClick?.(event);
-
-          store.send({
-            type: "removeList",
-            listId: args.listId,
-          });
-        },
-      };
-    },
     updatePositions(args) {
       store.send({ type: "updatePositions", ...args });
     },

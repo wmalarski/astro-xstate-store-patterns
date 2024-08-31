@@ -19,14 +19,5 @@ export const connect = (store: DescriptionsStore): MachineApi => {
         },
       };
     },
-    getRemoveDescriptionButtonProps({ listId }, override) {
-      return {
-        onClick(event) {
-          override?.onClick?.(event);
-
-          store.send({ type: "remove", listId });
-        },
-      };
-    },
   };
 };

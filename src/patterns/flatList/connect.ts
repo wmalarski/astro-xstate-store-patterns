@@ -19,18 +19,6 @@ export const connect = (store: FlatListStore): MachineApi => {
         },
       };
     },
-    getRemoveListButtonProps({ listId }, override) {
-      return {
-        onClick(event) {
-          override?.onClick?.(event);
-
-          store.send({
-            type: "removeList",
-            listId,
-          });
-        },
-      };
-    },
     updatePositions(args) {
       store.send({ type: "updatePositions", ...args });
     },

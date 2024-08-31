@@ -98,7 +98,6 @@ type WishlistsGroupProps = {
   products: Record<string, Product>;
   wishlist: Wishlist.WishlistStoreList;
   wishlistApi: Wishlist.MachineApi;
-  nestedListApi: NestedList.MachineApi;
 };
 
 const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
@@ -108,10 +107,7 @@ const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
         <h3 class={cardTitleRecipe()}>{props.wishlist?.name}</h3>
         <button
           class={buttonRecipe({ size: "sm", color: "error" })}
-          {...props.wishlistApi.getRemoveListButtonProps(
-            props.wishlist,
-            props.nestedListApi.getRemoveListButtonProps(props.wishlist)
-          )}
+          {...props.wishlistApi.getRemoveListButtonProps(props.wishlist)}
         >
           Remove
         </button>
@@ -152,7 +148,6 @@ const Wishlists: Component<WishlistsProps> = (props) => {
         <Show when={props.group.current}>
           {(wishlist) => (
             <WishlistsGroup
-              nestedListApi={props.nestedListApi}
               products={props.products}
               wishlistApi={props.wishlistApi}
               wishlist={wishlist()}

@@ -9,3 +9,5 @@ export const nestedStore = NestedList.createNestedStore();
 export const descriptionsStore = Descriptions.createDescriptionStore();
 
 FlatList.subscribeWishlistStore(flatListStore, wishlistStore);
+NestedList.subscribeWishlistStore(nestedStore, wishlistStore);
+Descriptions.subscribeWishlistStore(descriptionsStore, wishlistStore);

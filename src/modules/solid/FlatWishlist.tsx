@@ -117,7 +117,6 @@ type WishlistsGroupProps = {
   products: Record<string, Product>;
   list: WishlistStoreList;
   wishlistApi: Wishlist.MachineApi;
-  flatListApi: FlatList.MachineApi;
 };
 
 const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
@@ -146,10 +145,7 @@ const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
           <button
             type="button"
             class={buttonRecipe({ size: "sm", color: "error" })}
-            {...props.wishlistApi.getRemoveListButtonProps(
-              props.list,
-              props.flatListApi.getRemoveListButtonProps(props.list)
-            )}
+            {...props.wishlistApi.getRemoveListButtonProps(props.list)}
           >
             Remove
           </button>
@@ -162,7 +158,6 @@ const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
 type WishlistsGroupsProps = {
   products: Product[];
   wishlistApi: Wishlist.MachineApi;
-  flatListApi: FlatList.MachineApi;
 };
 
 const WishlistsGroups: Component<WishlistsGroupsProps> = (props) => {
@@ -182,7 +177,6 @@ const WishlistsGroups: Component<WishlistsGroupsProps> = (props) => {
       <For each={Object.values(lists())}>
         {(list) => (
           <WishlistsGroup
-            flatListApi={props.flatListApi}
             products={productsMap()}
             wishlistApi={props.wishlistApi}
             list={list}
@@ -209,7 +203,6 @@ export const FlatWishlist: Component<FlatWishlistProps> = (props) => {
       />
       <WishlistsGroups
         products={props.products}
-        flatListApi={props.flatListApi}
         wishlistApi={props.wishlistApi}
       />
     </section>

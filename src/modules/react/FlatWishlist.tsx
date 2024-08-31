@@ -114,11 +114,9 @@ type WishlistsGroupProps = {
   products: Record<string, Product>;
   list: WishlistStoreList;
   wishlistApi: Wishlist.MachineApi;
-  flatListApi: FlatList.MachineApi;
 };
 
 const WishlistsGroup: FC<WishlistsGroupProps> = ({
-  flatListApi,
   list,
   wishlistApi,
   products,
@@ -147,10 +145,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
           <button
             type="button"
             className={buttonRecipe({ size: "sm", color: "error" })}
-            {...wishlistApi.getRemoveListButtonProps(
-              list,
-              flatListApi.getRemoveListButtonProps(list)
-            )}
+            {...wishlistApi.getRemoveListButtonProps(list)}
           >
             Remove
           </button>
@@ -163,11 +158,9 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
 type WishlistsGroupsProps = {
   products: Product[];
   wishlistApi: Wishlist.MachineApi;
-  flatListApi: FlatList.MachineApi;
 };
 
 const WishlistsGroups: FC<WishlistsGroupsProps> = ({
-  flatListApi,
   products,
   wishlistApi,
 }) => {
@@ -182,7 +175,6 @@ const WishlistsGroups: FC<WishlistsGroupsProps> = ({
       {Object.entries(lists).map(([listId, list]) => (
         <WishlistsGroup
           key={listId}
-          flatListApi={flatListApi}
           products={productsMap}
           wishlistApi={wishlistApi}
           list={list}
@@ -207,11 +199,7 @@ export const FlatWishlist: FC<FlatWishlistProps> = ({
     <section className="flex flex-col gap-4">
       <h2 className="text-2xl">React Flat Wishlist</h2>
       <AddListForm flatListApi={flatListApi} wishlistApi={wishlistApi} />
-      <WishlistsGroups
-        products={products}
-        flatListApi={flatListApi}
-        wishlistApi={wishlistApi}
-      />
+      <WishlistsGroups products={products} wishlistApi={wishlistApi} />
     </section>
   );
 };
