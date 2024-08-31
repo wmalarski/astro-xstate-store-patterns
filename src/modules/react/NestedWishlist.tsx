@@ -3,8 +3,8 @@ import { nanoid } from "nanoid";
 import { useMemo, type FC } from "react";
 import * as NestedList from "../../patterns/nestedList";
 import {
-  groupByPosition2,
-  type GetListGroupData2,
+  groupByPosition,
+  type GetListGroupData,
 } from "../../patterns/nestedList/utils";
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
@@ -16,7 +16,7 @@ import { textFieldRecipe } from "../../recipes/textField";
 type AddListFormProps = {
   nestedListApi: NestedList.MachineApi;
   wishlistApi: Wishlist.MachineApi;
-  group?: GetListGroupData2;
+  group?: GetListGroupData;
 };
 
 const AddListForm: FC<AddListFormProps> = ({
@@ -123,7 +123,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
 
 type WishlistsProps = {
   products: Record<string, Product>;
-  group: GetListGroupData2;
+  group: GetListGroupData;
   wishlistApi: Wishlist.MachineApi;
   nestedListApi: NestedList.MachineApi;
 };
@@ -189,7 +189,7 @@ const WishlistsRoot: FC<WishlistsRootProps> = ({
   );
 
   const root = useMemo(
-    () => groupByPosition2(Object.values(wishlists), nestedLists),
+    () => groupByPosition(Object.values(wishlists), nestedLists),
     [wishlists, nestedLists]
   );
 
