@@ -1,0 +1,242 @@
+/** @jsxImportSource solid-js */
+
+import { useSelector } from "@xstate/store/react";
+import { nanoid } from "nanoid";
+import { useMemo } from "react";
+import { For, Show, type Component } from "solid-js";
+import * as NestedList from "../../patterns/nestedList";
+import {
+  groupByPosition,
+  type GetListGroupData,
+} from "../../patterns/nestedList/utils";
+import type { Product } from "../../patterns/products/types";
+import * as Wishlist from "../../patterns/wishlist";
+import { buttonRecipe } from "../../recipes/button";
+import {
+  cardBodyRecipe,
+  cardRecipe,
+  cardTitleRecipe,
+} from "../../recipes/card";
+import { formControlRecipe } from "../../recipes/formControl";
+import { labelRecipe, labelTextRecipe } from "../../recipes/label";
+import { textFieldRecipe } from "../../recipes/textField";
+
+type AddListFormProps = {
+  nestedListApi: NestedList.MachineApi;
+  wishlistApi: Wishlist.MachineApi;
+  group?: GetListGroupData;
+};
+
+const AddListForm: Component<AddListFormProps> = (props) => {
+  return (
+    <form
+      class="flex flex-col gap-2"
+      {...props.nestedListApi.getAddListFormProps(
+        props.wishlistApi.getAddListFormProps()
+      )}
+    >
+      <h3>{props.group ? "Add Nested Wishlist" : "Add Wishlist"}</h3>
+      <input type="hidden" name="listId" value={nanoid()} />
+      <input
+        type="hidden"
+        name="position"
+        value={props.group?.path.join("/")}
+      />
+      <label class={formControlRecipe()}>
+        <div class={labelRecipe()}>
+          <span class={labelTextRecipe()}>Name</span>
+        </div>
+        <input
+          required
+          class={textFieldRecipe({ variant: "bordered", size: "sm" })}
+          type="text"
+          name="name"
+        />
+      </label>
+      <button class={buttonRecipe({ size: "sm", color: "secondary" })}>
+        Add list
+      </button>
+    </form>
+  );
+};
+
+type WishlistsGroupItemProps = {
+  products: Record<string, Product>;
+  productId: string;
+  wishlist: Wishlist.WishlistStoreList;
+  wishlistApi: Wishlist.MachineApi;
+};
+
+const WishlistsGroupItem: Component<WishlistsGroupItemProps> = (props) => {
+  return (
+    <Show when={props.products[props.productId]}>
+      {(product) => (
+        <li class={cardRecipe({ shadow: "md", size: "side" })}>
+          <div class={cardBodyRecipe()}>
+            <span>{props.products[props.productId]?.name}</span>
+            <button
+              class={buttonRecipe({ size: "sm", color: "error" })}
+              {...props.wishlistApi.getRemoveProductButtonProps({
+                listId: props.wishlist.listId,
+                productId: props.productId,
+              })}
+            >
+              Remove
+            </button>
+          </div>
+          <figure>
+            <img src={product().image} alt={product.name} />
+          </figure>
+        </li>
+      )}
+    </Show>
+  );
+};
+
+type WishlistsGroupProps = {
+  products: Record<string, Product>;
+  wishlist: Wishlist.WishlistStoreList;
+  wishlistApi: Wishlist.MachineApi;
+  nestedListApi: NestedList.MachineApi;
+};
+
+const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
+  return (
+    <div class="flex flex-col gap-2">
+      <div class="flex w-full justify-between">
+        <h3 class={cardTitleRecipe()}>{props.wishlist?.name}</h3>
+        <button
+          class={buttonRecipe({ size: "sm", color: "error" })}
+          {...props.wishlistApi.getRemoveListButtonProps(
+            props.wishlist,
+            props.nestedListApi.getRemoveListButtonProps(props.wishlist)
+          )}
+        >
+          Remove
+        </button>
+      </div>
+      <ul>
+        <For each={props.wishlist?.productIds}>
+          {(productId) => (
+            <WishlistsGroupItem
+              wishlist={props.wishlist}
+              productId={productId}
+              products={props.products}
+              wishlistApi={props.wishlistApi}
+            />
+          )}
+        </For>
+      </ul>
+    </div>
+  );
+};
+
+type WishlistsProps = {
+  products: Record<string, Product>;
+  group: GetListGroupData;
+  wishlistApi: Wishlist.MachineApi;
+  nestedListApi: NestedList.MachineApi;
+};
+
+const Wishlists: Component<WishlistsProps> = (props) => {
+  return (
+    <div
+      class={cardRecipe({
+        size: "compact",
+        shadow: "xl",
+        variant: "bordered",
+      })}
+    >
+      <div class={cardBodyRecipe()}>
+        <Show when={props.group.current}>
+          {(wishlist) => (
+            <WishlistsGroup
+              nestedListApi={props.nestedListApi}
+              products={props.products}
+              wishlistApi={props.wishlistApi}
+              wishlist={wishlist()}
+            />
+          )}
+        </Show>
+        <AddListForm
+          nestedListApi={props.nestedListApi}
+          wishlistApi={props.wishlistApi}
+          group={props.group}
+        />
+        <ul>
+          <For each={Object.values(props.group.children)}>
+            {(child) => (
+              <li>
+                <Wishlists
+                  group={child}
+                  nestedListApi={props.nestedListApi}
+                  wishlistApi={props.wishlistApi}
+                  products={props.products}
+                />
+              </li>
+            )}
+          </For>
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+type WishlistsRootProps = {
+  products: Product[];
+  wishlistApi: Wishlist.MachineApi;
+  nestedListApi: NestedList.MachineApi;
+};
+
+const WishlistsRoot: Component<WishlistsRootProps> = (props) => {
+  const wishlists = useSelector(
+    props.wishlistApi.store,
+    ({ context }) => context.lists
+  );
+
+  const nestedLists = useSelector(
+    props.nestedListApi.store,
+    ({ context }) => context.lists
+  );
+
+  const root = useMemo(
+    () => groupByPosition(Object.values(wishlists), nestedLists),
+    [wishlists, nestedLists]
+  );
+
+  const productsMap = useMemo(
+    () =>
+      Object.fromEntries(
+        props.products.map((product) => [product.id, product])
+      ),
+    [props.products]
+  );
+
+  return (
+    <Wishlists
+      group={root}
+      nestedListApi={props.nestedListApi}
+      products={productsMap}
+      wishlistApi={props.wishlistApi}
+    />
+  );
+};
+
+type NestedWishlistProps = {
+  products: Product[];
+  wishlistApi: Wishlist.MachineApi;
+  nestedListApi: NestedList.MachineApi;
+};
+
+export const NestedWishlist: Component<NestedWishlistProps> = (props) => {
+  return (
+    <section class="flex flex-col gap-4">
+      <h2 class="text-2xl">Nested Wishlist</h2>
+      <WishlistsRoot
+        products={props.products}
+        nestedListApi={props.nestedListApi}
+        wishlistApi={props.wishlistApi}
+      />
+    </section>
+  );
+};

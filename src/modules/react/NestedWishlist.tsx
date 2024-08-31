@@ -109,7 +109,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
   products,
 }) => {
   return (
-    <li className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <div className="flex w-full justify-between">
         <h3 className={cardTitleRecipe()}>{wishlist?.name}</h3>
         <button
@@ -133,7 +133,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
           />
         ))}
       </ul>
-    </li>
+    </div>
   );
 };
 
@@ -159,16 +159,14 @@ const Wishlists: FC<WishlistsProps> = ({
       })}
     >
       <div className={cardBodyRecipe()}>
-        <ul>
-          {group.current && (
-            <WishlistsGroup
-              nestedListApi={nestedListApi}
-              products={products}
-              wishlistApi={wishlistApi}
-              wishlist={group.current}
-            />
-          )}
-        </ul>
+        {group.current && (
+          <WishlistsGroup
+            nestedListApi={nestedListApi}
+            products={products}
+            wishlistApi={wishlistApi}
+            wishlist={group.current}
+          />
+        )}
         <AddListForm
           nestedListApi={nestedListApi}
           wishlistApi={wishlistApi}
