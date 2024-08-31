@@ -4,10 +4,6 @@ import { useSelector } from "@xstate/store/solid";
 import { nanoid } from "nanoid";
 import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import * as NestedList from "../../patterns/nestedList";
-import {
-  groupByPosition,
-  type GetListGroupData,
-} from "../../patterns/nestedList/utils";
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
 import { buttonRecipe } from "../../recipes/button";
@@ -23,7 +19,7 @@ import { textFieldRecipe } from "../../recipes/textField";
 type AddListFormProps = {
   nestedListApi: NestedList.MachineApi;
   wishlistApi: Wishlist.MachineApi;
-  group?: GetListGroupData;
+  group?: NestedList.GetListGroupData;
 };
 
 const AddListForm: Component<AddListFormProps> = (props) => {
@@ -138,7 +134,7 @@ const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
 
 type WishlistsProps = {
   products: Record<string, Product>;
-  group: GetListGroupData;
+  group: NestedList.GetListGroupData;
   wishlistApi: Wishlist.MachineApi;
   nestedListApi: NestedList.MachineApi;
 };
@@ -205,7 +201,7 @@ const WishlistsRoot: Component<WishlistsRootProps> = (props) => {
   );
 
   const root = createMemo(() =>
-    groupByPosition(Object.values(wishlists()), nestedLists())
+    NestedList.groupByPosition(Object.values(wishlists()), nestedLists())
   );
 
   const productsMap = createMemo(() =>
