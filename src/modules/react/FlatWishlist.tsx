@@ -14,7 +14,7 @@ import {
 } from "../../recipes/card";
 import { formControlRecipe } from "../../recipes/formControl";
 import { labelRecipe, labelTextRecipe } from "../../recipes/label";
-import { textFieldClass as textFieldRecipe } from "../../recipes/textField";
+import { textFieldRecipe } from "../../recipes/textField";
 
 type AddListFormProps = {
   flatListApi: FlatList.MachineApi;

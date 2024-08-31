@@ -1,6 +1,6 @@
 import { twCva } from "./twCva";
 
-export const textFieldClass = twCva("input", {
+export const textFieldRecipe = twCva("input", {
   defaultVariants: {
     color: null,
     size: "md",

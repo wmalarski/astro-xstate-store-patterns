@@ -3,18 +3,20 @@ import { nanoid } from "nanoid";
 import { useMemo, type FC } from "react";
 import * as NestedList from "../../patterns/nestedList";
 import {
-  getListGroup,
-  type GetListGroupData,
-  type GetListGroupResult,
+  groupByPosition2,
+  type GetListGroupData2,
 } from "../../patterns/nestedList/utils";
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
 import { buttonRecipe } from "../../recipes/button";
+import { formControlRecipe } from "../../recipes/formControl";
+import { labelRecipe, labelTextRecipe } from "../../recipes/label";
+import { textFieldRecipe } from "../../recipes/textField";
 
 type AddListFormProps = {
   nestedListApi: NestedList.MachineApi;
   wishlistApi: Wishlist.MachineApi;
-  group?: GetListGroupResult;
+  group?: GetListGroupData2;
 };
 
 const AddListForm: FC<AddListFormProps> = ({
@@ -30,13 +32,20 @@ const AddListForm: FC<AddListFormProps> = ({
 
   return (
     <form
+      className="flex flex-col gap-2"
       {...nestedListApi.getAddListFormProps(wishlistApi.getAddListFormProps())}
     >
       <input type="hidden" name="listId" value={nanoid()} />
-      <input type="hidden" name="position" value={group?.parents.join("/")} />
-      <label>
-        Name
-        <input type="text" name="name" />
+      <input type="hidden" name="position" value={group?.path.join("/")} />
+      <label className={formControlRecipe()}>
+        <div className={labelRecipe()}>
+          <span className={labelTextRecipe()}>Name</span>
+        </div>
+        <input
+          className={textFieldRecipe({ variant: "bordered", size: "sm" })}
+          type="text"
+          name="name"
+        />
       </label>
       <button className={buttonRecipe()}>Add list</button>
     </form>
@@ -46,12 +55,12 @@ const AddListForm: FC<AddListFormProps> = ({
 type WishlistsGroupItemProps = {
   products: Record<string, Product>;
   productId: string;
-  list: NestedList.NestedProductGroup;
+  wishlist: Wishlist.WishlistStoreList;
   wishlistApi: Wishlist.MachineApi;
 };
 
 const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
-  list,
+  wishlist,
   productId,
   wishlistApi,
   products,
@@ -62,7 +71,7 @@ const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
       <button
         className={buttonRecipe()}
         {...wishlistApi.getRemoveProductButtonProps({
-          listId: list.listId,
+          listId: wishlist.listId,
           productId,
         })}
       >
@@ -74,30 +83,25 @@ const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
 
 type WishlistsGroupProps = {
   products: Record<string, Product>;
-  group: GetListGroupData;
+  wishlist: Wishlist.WishlistStoreList;
   wishlistApi: Wishlist.MachineApi;
   nestedListApi: NestedList.MachineApi;
 };
 
 const WishlistsGroup: FC<WishlistsGroupProps> = ({
   nestedListApi,
-  group,
+  wishlist,
   wishlistApi,
   products,
 }) => {
-  const wishlist = useSelector(
-    wishlistApi.store,
-    ({ context }) => context.lists[group.listId]
-  );
-
   return (
     <li>
       <span>{wishlist?.name}</span>
       <button
         className={buttonRecipe()}
         {...wishlistApi.getRemoveListButtonProps(
-          group,
-          nestedListApi.getRemoveListButtonProps(group)
+          wishlist,
+          nestedListApi.getRemoveListButtonProps(wishlist)
         )}
       >
         Remove List
@@ -106,7 +110,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
         {wishlist?.productIds.map((productId) => (
           <WishlistsGroupItem
             key={productId}
-            list={group}
+            wishlist={wishlist}
             productId={productId}
             products={products}
             wishlistApi={wishlistApi}
@@ -119,7 +123,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
 
 type WishlistsProps = {
   products: Record<string, Product>;
-  group: GetListGroupData;
+  group: GetListGroupData2;
   wishlistApi: Wishlist.MachineApi;
   nestedListApi: NestedList.MachineApi;
 };
@@ -133,20 +137,23 @@ const Wishlists: FC<WishlistsProps> = ({
   return (
     <div>
       <ul>
-        {group.current.map((group) => (
+        {group.current && (
           <WishlistsGroup
-            key={group.listId}
             nestedListApi={nestedListApi}
             products={products}
             wishlistApi={wishlistApi}
-            group={group}
+            wishlist={group.current}
           />
-        ))}
+        )}
       </ul>
-      <AddListForm nestedListApi={nestedListApi} wishlistApi={wishlistApi} />
+      <AddListForm
+        nestedListApi={nestedListApi}
+        wishlistApi={wishlistApi}
+        group={group}
+      />
       <ul>
         {Object.values(group.children).map((child) => (
-          <li key={child.parents.join("/")}>
+          <li key={child.current?.listId}>
             <Wishlists
               group={child}
               nestedListApi={nestedListApi}
@@ -182,7 +189,7 @@ const WishlistsRoot: FC<WishlistsRootProps> = ({
   );
 
   const root = useMemo(
-    () => getListGroup(wishlists, nestedLists),
+    () => groupByPosition2(Object.values(wishlists), nestedLists),
     [wishlists, nestedLists]
   );
 

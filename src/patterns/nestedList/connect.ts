@@ -11,11 +11,12 @@ export const connect = (store: NestedStore): MachineApi => {
 
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
+          const position = formData.get("position") as string;
+
           store.send({
             type: "addList",
             listId: formData.get("listId") as string,
-            name: formData.get("name") as string,
-            position: (formData.get("position") as string).split("/"),
+            position: position.length === 0 ? [] : position.split("/"),
           });
         },
       };
