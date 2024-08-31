@@ -1,6 +1,7 @@
 import { useSelector } from "@xstate/store/react";
 import { nanoid } from "nanoid";
-import { useMemo, type FC } from "react";
+import { useEffect, useMemo, useRef, type FC } from "react";
+import { createSwapy } from "swapy";
 import * as Descriptions from "../../patterns/descriptions";
 import * as FlatList from "../../patterns/flatList";
 import type { Product } from "../../patterns/products/types";
@@ -62,7 +63,7 @@ const AddListForm: FC<AddListFormProps> = ({
         <input
           className={textFieldRecipe({ variant: "bordered", size: "sm" })}
           type="text"
-          name="name"
+          name="description"
           required
         />
       </label>
@@ -143,7 +144,14 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
   );
 
   return (
-    <div className={cardRecipe({ shadow: "md", size: "compact" })}>
+    <div
+      data-swapy-item={list.listId}
+      className={cardRecipe({
+        class: "relative",
+        shadow: "md",
+        size: "compact",
+      })}
+    >
       <div className={cardBodyRecipe()}>
         <h3 className={cardTitleRecipe()}>{wishlist?.name}</h3>
         <span className="text-lg">{description}</span>
@@ -168,6 +176,10 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
           </button>
         </div>
       </div>
+      <div
+        className="absolute left-0 top-0 w-5 h-full bg-base-300 opacity-50 cursor-pointer"
+        data-swapy-handle
+      />
     </div>
   );
 };
@@ -183,22 +195,36 @@ const WishlistsGroups: FC<WishlistsGroupsProps> = ({
   wishlistApi,
   descriptionsApi,
 }) => {
+  const listRef = useRef<HTMLUListElement>(null);
+
   const lists = useSelector(wishlistApi.store, ({ context }) => context.lists);
 
   const productsMap = useMemo(() => {
     return Object.fromEntries(products.map((product) => [product.id, product]));
   }, [products]);
 
+  useEffect(() => {
+    if (Object.keys(lists).length === 0) {
+      return;
+    }
+
+    const swapy = createSwapy(listRef.current!);
+    swapy.onSwap(({ data }) => {
+      console.log("data", data);
+    });
+  }, [lists]);
+
   return (
-    <ul>
-      {Object.entries(lists).map(([listId, list]) => (
-        <WishlistsGroup
-          key={listId}
-          descriptionsApi={descriptionsApi}
-          products={productsMap}
-          wishlistApi={wishlistApi}
-          list={list}
-        />
+    <ul ref={listRef}>
+      {Object.entries(lists).map(([listId, list], index) => (
+        <li data-swapy-slot={index} key={listId}>
+          <WishlistsGroup
+            descriptionsApi={descriptionsApi}
+            products={productsMap}
+            wishlistApi={wishlistApi}
+            list={list}
+          />
+        </li>
       ))}
     </ul>
   );
