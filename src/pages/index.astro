@@ -7,15 +7,17 @@ import { Solid1Example } from "../modules/solid/Solid1Example";
 import { Solid2Example } from "../modules/solid/Solid2Example";
 import { getProducts } from "../patterns/products/data";
 
+export const prerender = true;
+
 const data = getProducts().products;
 ---
 
 <Layout title="Welcome to Wishlists.">
   <main class="grid grid-cols-2">
-    <Solid1Example client:load products={data} />
-    <Solid2Example client:load products={data} />
-    <React1Example client:load products={data} />
-    <React2Example client:load products={data} />
+    <Solid1Example client:only="solid" products={data} />
+    <Solid2Example client:only="solid" products={data} />
+    <React1Example client:only="react" products={data} />
+    <React2Example client:only="react" products={data} />
   </main>
-  <Debug client:load />
+  <Debug client:only="solid" />
 </Layout>
