@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import type { MachineComponentProps } from "../utils";
 import type {
   FlatListStore,
   FlatListStoreRemoveListEvent,
@@ -13,11 +13,11 @@ export interface ItemProps {
 export type MachineApi = {
   store: FlatListStore;
   getAddListFormProps(
-    override?: ComponentProps<"form">
-  ): ComponentProps<"form">;
+    override?: MachineComponentProps["form"]
+  ): MachineComponentProps["form"];
   getRemoveListButtonProps(
     props: FlatListStoreRemoveListEvent,
-    override?: ComponentProps<"button">
-  ): ComponentProps<"button">;
+    override?: MachineComponentProps["button"]
+  ): MachineComponentProps["button"];
   updatePositions(args: FlatListStoreUpdatePositionsEvent): void;
 };

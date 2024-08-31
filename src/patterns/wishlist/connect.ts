@@ -46,7 +46,7 @@ export const connect = (store: WishlistStore): MachineApi => {
     getRemoveProductButtonProps(args, override) {
       return {
         onClick(event) {
-          override?.onChange?.(event);
+          override?.onClick?.(event);
 
           store.send({ type: "removeProduct", ...args });
         },

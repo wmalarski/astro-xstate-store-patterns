@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import type { MachineComponentProps } from "../utils";
 import type {
   WishlistStore,
   WishlistStoreRemoveListEvent,
@@ -13,18 +13,18 @@ export interface ItemProps {
 export type MachineApi = {
   store: WishlistStore;
   getAddListFormProps(
-    override?: ComponentProps<"form">
-  ): ComponentProps<"form">;
+    override?: MachineComponentProps["form"]
+  ): MachineComponentProps["form"];
   getAddProductFormProps(
-    override?: ComponentProps<"form">
-  ): ComponentProps<"form">;
+    override?: MachineComponentProps["form"]
+  ): MachineComponentProps["form"];
   getRemoveListButtonProps(
     props: WishlistStoreRemoveListEvent,
-    override?: ComponentProps<"button">
-  ): ComponentProps<"button">;
+    override?: MachineComponentProps["button"]
+  ): MachineComponentProps["button"];
   getRemoveProductButtonProps(
     props: WishlistStoreRemoveProductEvent,
-    override?: ComponentProps<"button">
-  ): ComponentProps<"button">;
+    override?: MachineComponentProps["button"]
+  ): MachineComponentProps["button"];
   updateProduct: (props: WishlistStoreUpdateEvent) => void;
 };
