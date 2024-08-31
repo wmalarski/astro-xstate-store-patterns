@@ -1,9 +1,9 @@
 import { useSelector } from "@xstate/store/react";
 import { nanoid } from "nanoid";
 import { useMemo, type FC } from "react";
+import * as Descriptions from "../../patterns/descriptions";
 import * as FlatList from "../../patterns/flatList";
 import type { Product } from "../../patterns/products/types";
-import type { WishlistStoreList } from "../../patterns/wishlist";
 import * as Wishlist from "../../patterns/wishlist";
 import { buttonRecipe } from "../../recipes/button";
 import {
@@ -19,9 +19,14 @@ import { textFieldRecipe } from "../../recipes/textField";
 type AddListFormProps = {
   flatListApi: FlatList.MachineApi;
   wishlistApi: Wishlist.MachineApi;
+  descriptionsApi: Descriptions.MachineApi;
 };
 
-const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
+const AddListForm: FC<AddListFormProps> = ({
+  flatListApi,
+  wishlistApi,
+  descriptionsApi,
+}) => {
   const position = useSelector(
     wishlistApi.store,
     ({ context }) => Object.keys(context.lists).length + 1
@@ -30,7 +35,11 @@ const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
   return (
     <form
       className="flex flex-col gap-2"
-      {...flatListApi.getAddListFormProps(wishlistApi.getAddListFormProps())}
+      {...flatListApi.getAddListFormProps(
+        wishlistApi.getAddListFormProps(
+          descriptionsApi.getSetDescriptionFormProps()
+        )
+      )}
     >
       <h3>Add Wishlist</h3>
       <input type="hidden" name="listId" value={nanoid()} />
@@ -67,7 +76,7 @@ const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
 type WishlistsGroupItemProps = {
   products: Record<string, Product>;
   productId: string;
-  list: WishlistStoreList;
+  list: Wishlist.WishlistStoreList;
   wishlistApi: Wishlist.MachineApi;
 };
 
@@ -112,17 +121,24 @@ const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
 
 type WishlistsGroupProps = {
   products: Record<string, Product>;
-  list: WishlistStoreList;
+  list: Wishlist.WishlistStoreList;
   wishlistApi: Wishlist.MachineApi;
+  descriptionsApi: Descriptions.MachineApi;
 };
 
 const WishlistsGroup: FC<WishlistsGroupProps> = ({
   list,
   wishlistApi,
   products,
+  descriptionsApi,
 }) => {
   const wishlist = useSelector(
     wishlistApi.store,
+    ({ context }) => context.lists[list.listId]
+  );
+
+  const description = useSelector(
+    descriptionsApi.store,
     ({ context }) => context.lists[list.listId]
   );
 
@@ -130,6 +146,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
     <div className={cardRecipe({ shadow: "md", size: "compact" })}>
       <div className={cardBodyRecipe()}>
         <h3 className={cardTitleRecipe()}>{wishlist?.name}</h3>
+        <span className="text-lg">{description}</span>
         <ul>
           {wishlist?.productIds?.map((productId) => (
             <WishlistsGroupItem
@@ -158,11 +175,13 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
 type WishlistsGroupsProps = {
   products: Product[];
   wishlistApi: Wishlist.MachineApi;
+  descriptionsApi: Descriptions.MachineApi;
 };
 
 const WishlistsGroups: FC<WishlistsGroupsProps> = ({
   products,
   wishlistApi,
+  descriptionsApi,
 }) => {
   const lists = useSelector(wishlistApi.store, ({ context }) => context.lists);
 
@@ -175,6 +194,7 @@ const WishlistsGroups: FC<WishlistsGroupsProps> = ({
       {Object.entries(lists).map(([listId, list]) => (
         <WishlistsGroup
           key={listId}
+          descriptionsApi={descriptionsApi}
           products={productsMap}
           wishlistApi={wishlistApi}
           list={list}
@@ -188,18 +208,28 @@ type FlatWishlistProps = {
   products: Product[];
   wishlistApi: Wishlist.MachineApi;
   flatListApi: FlatList.MachineApi;
+  descriptionsApi: Descriptions.MachineApi;
 };
 
 export const FlatWishlist: FC<FlatWishlistProps> = ({
   flatListApi,
   products,
   wishlistApi,
+  descriptionsApi,
 }) => {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="text-2xl">React Flat Wishlist</h2>
-      <AddListForm flatListApi={flatListApi} wishlistApi={wishlistApi} />
-      <WishlistsGroups products={products} wishlistApi={wishlistApi} />
+      <AddListForm
+        descriptionsApi={descriptionsApi}
+        flatListApi={flatListApi}
+        wishlistApi={wishlistApi}
+      />
+      <WishlistsGroups
+        products={products}
+        wishlistApi={wishlistApi}
+        descriptionsApi={descriptionsApi}
+      />
     </section>
   );
 };

@@ -44,7 +44,11 @@ export const createWishlistStore = (args: CreateWishlistStoreArgs = {}) => {
           ...context,
           lists: {
             ...context.lists,
-            [event.listId]: { ...event, productIds: [] },
+            [event.listId]: {
+              listId: event.listId,
+              name: event.name,
+              productIds: [],
+            },
           },
         };
       },

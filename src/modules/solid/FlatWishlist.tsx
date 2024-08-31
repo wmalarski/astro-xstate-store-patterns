@@ -3,6 +3,7 @@
 import { useSelector } from "@xstate/store/solid";
 import { nanoid } from "nanoid";
 import { createMemo, createSignal, For, Show, type Component } from "solid-js";
+import * as Descriptions from "../../patterns/descriptions";
 import * as FlatList from "../../patterns/flatList";
 import type { Product } from "../../patterns/products/types";
 import type { WishlistStoreList } from "../../patterns/wishlist";
@@ -21,6 +22,7 @@ import { textFieldRecipe } from "../../recipes/textField";
 type AddListFormProps = {
   flatListApi: FlatList.MachineApi;
   wishlistApi: Wishlist.MachineApi;
+  descriptionsApi: Descriptions.MachineApi;
 };
 
 const AddListForm: Component<AddListFormProps> = (props) => {
@@ -35,11 +37,13 @@ const AddListForm: Component<AddListFormProps> = (props) => {
     <form
       class="flex flex-col gap-2"
       {...props.flatListApi.getAddListFormProps(
-        props.wishlistApi.getAddListFormProps({
-          onSubmit() {
-            setListId(nanoid());
-          },
-        })
+        props.wishlistApi.getAddListFormProps(
+          props.descriptionsApi.getSetDescriptionFormProps({
+            onSubmit() {
+              setListId(nanoid());
+            },
+          })
+        )
       )}
     >
       <h3>Add Wishlist</h3>
@@ -117,6 +121,7 @@ type WishlistsGroupProps = {
   products: Record<string, Product>;
   list: WishlistStoreList;
   wishlistApi: Wishlist.MachineApi;
+  descriptionsApi: Descriptions.MachineApi;
 };
 
 const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
@@ -125,10 +130,16 @@ const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
     ({ context }) => context.lists[props.list.listId]
   );
 
+  const description = useSelector(
+    props.descriptionsApi.store,
+    ({ context }) => context.lists[props.list.listId]
+  );
+
   return (
     <div class={cardRecipe({ shadow: "md", size: "compact" })}>
       <div class={cardBodyRecipe()}>
         <h3 class={cardTitleRecipe()}>{wishlist()?.name}</h3>
+        <span class="text-lg">{description()}</span>
         <ul>
           <For each={wishlist()?.productIds}>
             {(productId) => (
@@ -158,6 +169,7 @@ const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
 type WishlistsGroupsProps = {
   products: Product[];
   wishlistApi: Wishlist.MachineApi;
+  descriptionsApi: Descriptions.MachineApi;
 };
 
 const WishlistsGroups: Component<WishlistsGroupsProps> = (props) => {
@@ -180,6 +192,7 @@ const WishlistsGroups: Component<WishlistsGroupsProps> = (props) => {
             products={productsMap()}
             wishlistApi={props.wishlistApi}
             list={list}
+            descriptionsApi={props.descriptionsApi}
           />
         )}
       </For>
@@ -191,6 +204,7 @@ type FlatWishlistProps = {
   products: Product[];
   wishlistApi: Wishlist.MachineApi;
   flatListApi: FlatList.MachineApi;
+  descriptionsApi: Descriptions.MachineApi;
 };
 
 export const FlatWishlist: Component<FlatWishlistProps> = (props) => {
@@ -200,10 +214,12 @@ export const FlatWishlist: Component<FlatWishlistProps> = (props) => {
       <AddListForm
         flatListApi={props.flatListApi}
         wishlistApi={props.wishlistApi}
+        descriptionsApi={props.descriptionsApi}
       />
       <WishlistsGroups
         products={props.products}
         wishlistApi={props.wishlistApi}
+        descriptionsApi={props.descriptionsApi}
       />
     </section>
   );
