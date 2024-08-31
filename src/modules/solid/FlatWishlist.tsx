@@ -56,6 +56,17 @@ const AddListForm: Component<AddListFormProps> = (props) => {
           required
         />
       </label>
+      <label class={formControlRecipe()}>
+        <div class={labelRecipe()}>
+          <span class={labelTextRecipe()}>Description</span>
+        </div>
+        <input
+          class={textFieldRecipe({ variant: "bordered", size: "sm" })}
+          type="text"
+          name="description"
+          required
+        />
+      </label>
       <button class={buttonRecipe({ size: "sm", color: "accent" })}>
         Add list
       </button>

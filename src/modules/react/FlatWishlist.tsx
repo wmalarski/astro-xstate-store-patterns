@@ -46,6 +46,17 @@ const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
           required
         />
       </label>
+      <label className={formControlRecipe()}>
+        <div className={labelRecipe()}>
+          <span className={labelTextRecipe()}>Description</span>
+        </div>
+        <input
+          className={textFieldRecipe({ variant: "bordered", size: "sm" })}
+          type="text"
+          name="name"
+          required
+        />
+      </label>
       <button className={buttonRecipe({ size: "sm", color: "accent" })}>
         Add list
       </button>
