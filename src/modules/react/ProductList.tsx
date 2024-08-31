@@ -53,7 +53,7 @@ const AddProductToList: FC<AddProductToListProps> = ({
       </label>
       <button
         disabled={listKeys.length < 1}
-        className={buttonRecipe({ size: "sm" })}
+        className={buttonRecipe({ size: "sm", color: "primary" })}
       >
         Add Product to List
       </button>
@@ -68,7 +68,9 @@ type ProductItemProps = {
 
 const ProductItem: FC<ProductItemProps> = ({ product, wishlistApi }) => {
   return (
-    <li className={cardRecipe({ class: "shadow-md w-64", size: "compact" })}>
+    <li
+      className={cardRecipe({ shadow: "md", class: "w-64", size: "compact" })}
+    >
       <figure>
         <img src={product.image} alt={product.name} />
       </figure>

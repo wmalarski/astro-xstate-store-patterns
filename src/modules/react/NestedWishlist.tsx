@@ -9,6 +9,11 @@ import {
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
 import { buttonRecipe } from "../../recipes/button";
+import {
+  cardBodyRecipe,
+  cardRecipe,
+  cardTitleRecipe,
+} from "../../recipes/card";
 import { formControlRecipe } from "../../recipes/formControl";
 import { labelRecipe, labelTextRecipe } from "../../recipes/label";
 import { textFieldRecipe } from "../../recipes/textField";
@@ -24,17 +29,12 @@ const AddListForm: FC<AddListFormProps> = ({
   wishlistApi,
   group,
 }) => {
-  // const parents = useSelector(nestedListApi.store, ({ context }) =>
-  //   parentListId
-  //     ? Object.keys(context.lists).length + 1
-  //     : Object.keys(context.lists).length + 1
-  // );
-
   return (
     <form
       className="flex flex-col gap-2"
       {...nestedListApi.getAddListFormProps(wishlistApi.getAddListFormProps())}
     >
+      <h3>{group ? "Add Nested Wishlist" : "Add Wishlist"}</h3>
       <input type="hidden" name="listId" value={nanoid()} />
       <input type="hidden" name="position" value={group?.path.join("/")} />
       <label className={formControlRecipe()}>
@@ -42,12 +42,15 @@ const AddListForm: FC<AddListFormProps> = ({
           <span className={labelTextRecipe()}>Name</span>
         </div>
         <input
+          required
           className={textFieldRecipe({ variant: "bordered", size: "sm" })}
           type="text"
           name="name"
         />
       </label>
-      <button className={buttonRecipe()}>Add list</button>
+      <button className={buttonRecipe({ size: "sm", color: "secondary" })}>
+        Add list
+      </button>
     </form>
   );
 };
@@ -65,18 +68,29 @@ const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
   wishlistApi,
   products,
 }) => {
+  const product = products[productId];
+
+  if (!product) {
+    return null;
+  }
+
   return (
-    <li>
-      <span>{products[productId]?.name}</span>
-      <button
-        className={buttonRecipe()}
-        {...wishlistApi.getRemoveProductButtonProps({
-          listId: wishlist.listId,
-          productId,
-        })}
-      >
-        Remove from List
-      </button>
+    <li className={cardRecipe({ shadow: "md", size: "side" })}>
+      <div className={cardBodyRecipe()}>
+        <span>{products[productId]?.name}</span>
+        <button
+          className={buttonRecipe({ size: "sm", color: "error" })}
+          {...wishlistApi.getRemoveProductButtonProps({
+            listId: wishlist.listId,
+            productId,
+          })}
+        >
+          Remove
+        </button>
+      </div>
+      <figure>
+        <img src={product.image} alt={product.name} />
+      </figure>
     </li>
   );
 };
@@ -95,17 +109,19 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
   products,
 }) => {
   return (
-    <li>
-      <span>{wishlist?.name}</span>
-      <button
-        className={buttonRecipe()}
-        {...wishlistApi.getRemoveListButtonProps(
-          wishlist,
-          nestedListApi.getRemoveListButtonProps(wishlist)
-        )}
-      >
-        Remove List
-      </button>
+    <li className="flex flex-col gap-2">
+      <div className="flex w-full justify-between">
+        <h3 className={cardTitleRecipe()}>{wishlist?.name}</h3>
+        <button
+          className={buttonRecipe({ size: "sm", color: "error" })}
+          {...wishlistApi.getRemoveListButtonProps(
+            wishlist,
+            nestedListApi.getRemoveListButtonProps(wishlist)
+          )}
+        >
+          Remove
+        </button>
+      </div>
       <ul>
         {wishlist?.productIds.map((productId) => (
           <WishlistsGroupItem
@@ -135,34 +151,42 @@ const Wishlists: FC<WishlistsProps> = ({
   wishlistApi,
 }) => {
   return (
-    <div>
-      <ul>
-        {group.current && (
-          <WishlistsGroup
-            nestedListApi={nestedListApi}
-            products={products}
-            wishlistApi={wishlistApi}
-            wishlist={group.current}
-          />
-        )}
-      </ul>
-      <AddListForm
-        nestedListApi={nestedListApi}
-        wishlistApi={wishlistApi}
-        group={group}
-      />
-      <ul>
-        {Object.values(group.children).map((child) => (
-          <li key={child.current?.listId}>
-            <Wishlists
-              group={child}
+    <div
+      className={cardRecipe({
+        size: "compact",
+        shadow: "xl",
+        variant: "bordered",
+      })}
+    >
+      <div className={cardBodyRecipe()}>
+        <ul>
+          {group.current && (
+            <WishlistsGroup
               nestedListApi={nestedListApi}
-              wishlistApi={wishlistApi}
               products={products}
+              wishlistApi={wishlistApi}
+              wishlist={group.current}
             />
-          </li>
-        ))}
-      </ul>
+          )}
+        </ul>
+        <AddListForm
+          nestedListApi={nestedListApi}
+          wishlistApi={wishlistApi}
+          group={group}
+        />
+        <ul>
+          {Object.values(group.children).map((child) => (
+            <li key={child.current?.listId}>
+              <Wishlists
+                group={child}
+                nestedListApi={nestedListApi}
+                wishlistApi={wishlistApi}
+                products={products}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

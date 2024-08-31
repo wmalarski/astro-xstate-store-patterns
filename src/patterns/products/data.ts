@@ -19,6 +19,6 @@ type ProductsData = {
 
 export const getProducts = (): ProductsData => {
   return {
-    products: new Array(20).fill(null).map(() => getProduct()),
+    products: new Array(5).fill(null).map(() => getProduct()),
   };
 };

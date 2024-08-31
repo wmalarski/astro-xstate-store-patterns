@@ -43,9 +43,12 @@ const AddListForm: FC<AddListFormProps> = ({ flatListApi, wishlistApi }) => {
           className={textFieldRecipe({ variant: "bordered", size: "sm" })}
           type="text"
           name="name"
+          required
         />
       </label>
-      <button className={buttonRecipe({ size: "sm" })}>Add list</button>
+      <button className={buttonRecipe({ size: "sm", color: "accent" })}>
+        Add list
+      </button>
     </form>
   );
 };
@@ -70,20 +73,26 @@ const WishlistsGroupItem: FC<WishlistsGroupItemProps> = ({
   }
 
   return (
-    <li className={cardRecipe({ class: "shadow-md", size: "side" })}>
+    <li
+      className={cardRecipe({
+        shadow: "md",
+        class: "bg-base-200",
+        size: "side",
+      })}
+    >
       <figure>
         <img src={product.image} alt={product.name} />
       </figure>
       <div className={cardBodyRecipe()}>
         <span>{products[productId]?.name}</span>
         <button
-          className={buttonRecipe()}
+          className={buttonRecipe({ size: "sm", color: "error" })}
           {...wishlistApi.getRemoveProductButtonProps({
             listId: list.listId,
             productId,
           })}
         >
-          Remove from List
+          Remove
         </button>
       </div>
     </li>
@@ -109,7 +118,7 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
   );
 
   return (
-    <div className={cardRecipe({ class: "shadow-md", size: "compact" })}>
+    <div className={cardRecipe({ shadow: "md", size: "compact" })}>
       <div className={cardBodyRecipe()}>
         <h3 className={cardTitleRecipe()}>{wishlist?.name}</h3>
         <ul>
@@ -126,13 +135,13 @@ const WishlistsGroup: FC<WishlistsGroupProps> = ({
         <div className={cardActionsRecipe()}>
           <button
             type="button"
-            className={buttonRecipe({ size: "sm" })}
+            className={buttonRecipe({ size: "sm", color: "error" })}
             {...wishlistApi.getRemoveListButtonProps(
               list,
               flatListApi.getRemoveListButtonProps(list)
             )}
           >
-            Remove List
+            Remove
           </button>
         </div>
       </div>
