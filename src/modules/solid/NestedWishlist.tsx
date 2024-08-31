@@ -1,9 +1,8 @@
 /** @jsxImportSource solid-js */
 
-import { useSelector } from "@xstate/store/react";
+import { useSelector } from "@xstate/store/solid";
 import { nanoid } from "nanoid";
-import { useMemo } from "react";
-import { For, Show, type Component } from "solid-js";
+import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import * as NestedList from "../../patterns/nestedList";
 import {
   groupByPosition,
@@ -28,15 +27,21 @@ type AddListFormProps = {
 };
 
 const AddListForm: Component<AddListFormProps> = (props) => {
+  const [listId, setListId] = createSignal(nanoid());
+
   return (
     <form
       class="flex flex-col gap-2"
       {...props.nestedListApi.getAddListFormProps(
-        props.wishlistApi.getAddListFormProps()
+        props.wishlistApi.getAddListFormProps({
+          onSubmit() {
+            setListId(nanoid());
+          },
+        })
       )}
     >
       <h3>{props.group ? "Add Nested Wishlist" : "Add Wishlist"}</h3>
-      <input type="hidden" name="listId" value={nanoid()} />
+      <input type="hidden" name="listId" value={listId()} />
       <input
         type="hidden"
         name="position"
@@ -199,24 +204,19 @@ const WishlistsRoot: Component<WishlistsRootProps> = (props) => {
     ({ context }) => context.lists
   );
 
-  const root = useMemo(
-    () => groupByPosition(Object.values(wishlists), nestedLists),
-    [wishlists, nestedLists]
+  const root = createMemo(() =>
+    groupByPosition(Object.values(wishlists()), nestedLists())
   );
 
-  const productsMap = useMemo(
-    () =>
-      Object.fromEntries(
-        props.products.map((product) => [product.id, product])
-      ),
-    [props.products]
+  const productsMap = createMemo(() =>
+    Object.fromEntries(props.products.map((product) => [product.id, product]))
   );
 
   return (
     <Wishlists
-      group={root}
+      group={root()}
       nestedListApi={props.nestedListApi}
-      products={productsMap}
+      products={productsMap()}
       wishlistApi={props.wishlistApi}
     />
   );
@@ -231,7 +231,7 @@ type NestedWishlistProps = {
 export const NestedWishlist: Component<NestedWishlistProps> = (props) => {
   return (
     <section class="flex flex-col gap-4">
-      <h2 class="text-2xl">Nested Wishlist</h2>
+      <h2 class="text-2xl">SolidJS Nested Wishlist</h2>
       <WishlistsRoot
         products={props.products}
         nestedListApi={props.nestedListApi}

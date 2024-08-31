@@ -1,4 +1,4 @@
-import type { MachineComponentProps } from "../utils";
+import type { MachineComponentProps } from "../types";
 import type {
   WishlistStore,
   WishlistStoreRemoveListEvent,

@@ -174,7 +174,7 @@ const Wishlists: FC<WishlistsProps> = ({
         />
         <ul>
           {Object.values(group.children).map((child) => (
-            <li key={child.current?.listId}>
+            <li key={child.path.join("/") + child.current?.listId}>
               <Wishlists
                 group={child}
                 nestedListApi={nestedListApi}
@@ -243,7 +243,7 @@ export const NestedWishlist: FC<NestedWishlistProps> = ({
 }) => {
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-2xl">Nested Wishlist</h2>
+      <h2 className="text-2xl">React Nested Wishlist</h2>
       <WishlistsRoot
         products={products}
         nestedListApi={nestedListApi}

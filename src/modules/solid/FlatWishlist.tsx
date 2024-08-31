@@ -1,9 +1,8 @@
 /** @jsxImportSource solid-js */
 
-import { useSelector } from "@xstate/store/react";
+import { useSelector } from "@xstate/store/solid";
 import { nanoid } from "nanoid";
-import { useMemo } from "react";
-import { For, Show, type Component } from "solid-js";
+import { createMemo, createSignal, For, Show, type Component } from "solid-js";
 import * as FlatList from "../../patterns/flatList";
 import type { Product } from "../../patterns/products/types";
 import type { WishlistStoreList } from "../../patterns/wishlist";
@@ -25,6 +24,8 @@ type AddListFormProps = {
 };
 
 const AddListForm: Component<AddListFormProps> = (props) => {
+  const [listId, setListId] = createSignal(nanoid());
+
   const position = useSelector(
     props.wishlistApi.store,
     ({ context }) => Object.keys(context.lists).length + 1
@@ -34,12 +35,16 @@ const AddListForm: Component<AddListFormProps> = (props) => {
     <form
       class="flex flex-col gap-2"
       {...props.flatListApi.getAddListFormProps(
-        props.wishlistApi.getAddListFormProps()
+        props.wishlistApi.getAddListFormProps({
+          onSubmit() {
+            setListId(nanoid());
+          },
+        })
       )}
     >
       <h3>Add Wishlist</h3>
-      <input type="hidden" name="listId" value={nanoid()} />
-      <input type="hidden" name="position" value={position} />
+      <input type="hidden" name="listId" value={listId()} />
+      <input type="hidden" name="position" value={position()} />
       <label class={formControlRecipe()}>
         <div class={labelRecipe()}>
           <span class={labelTextRecipe()}>Name</span>
@@ -113,9 +118,9 @@ const WishlistsGroup: Component<WishlistsGroupProps> = (props) => {
   return (
     <div class={cardRecipe({ shadow: "md", size: "compact" })}>
       <div class={cardBodyRecipe()}>
-        <h3 class={cardTitleRecipe()}>{wishlist?.name}</h3>
+        <h3 class={cardTitleRecipe()}>{wishlist()?.name}</h3>
         <ul>
-          <For each={wishlist?.productIds}>
+          <For each={wishlist()?.productIds}>
             {(productId) => (
               <WishlistsGroupItem
                 list={props.list}
@@ -155,19 +160,19 @@ const WishlistsGroups: Component<WishlistsGroupsProps> = (props) => {
     ({ context }) => context.lists
   );
 
-  const productsMap = useMemo(() => {
+  const productsMap = createMemo(() => {
     return Object.fromEntries(
       props.products.map((product) => [product.id, product])
     );
-  }, [props.products]);
+  });
 
   return (
     <ul>
-      <For each={Object.values(lists)}>
+      <For each={Object.values(lists())}>
         {(list) => (
           <WishlistsGroup
             flatListApi={props.flatListApi}
-            products={productsMap}
+            products={productsMap()}
             wishlistApi={props.wishlistApi}
             list={list}
           />
@@ -186,7 +191,7 @@ type FlatWishlistProps = {
 export const FlatWishlist: Component<FlatWishlistProps> = (props) => {
   return (
     <section class="flex flex-col gap-4">
-      <h2 class="text-2xl">Flat Wishlist</h2>
+      <h2 class="text-2xl">SolidJS Flat Wishlist</h2>
       <AddListForm
         flatListApi={props.flatListApi}
         wishlistApi={props.wishlistApi}

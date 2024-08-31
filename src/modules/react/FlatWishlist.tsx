@@ -194,7 +194,7 @@ export const FlatWishlist: FC<FlatWishlistProps> = ({
 }) => {
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-2xl">Flat Wishlist</h2>
+      <h2 className="text-2xl">React Flat Wishlist</h2>
       <AddListForm flatListApi={flatListApi} wishlistApi={wishlistApi} />
       <WishlistsGroups
         products={products}

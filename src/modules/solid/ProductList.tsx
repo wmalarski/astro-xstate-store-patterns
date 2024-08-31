@@ -1,6 +1,6 @@
 /** @jsxImportSource solid-js */
 
-import { useSelector } from "@xstate/store/react";
+import { useSelector } from "@xstate/store/solid";
 import { For, type Component } from "solid-js";
 import type { Product } from "../../patterns/products/types";
 import * as Wishlist from "../../patterns/wishlist";
@@ -24,7 +24,8 @@ const AddProductToList: Component<AddProductToListProps> = (props) => {
     props.wishlistApi.store,
     ({ context }) => context.lists
   );
-  const listKeys = Object.values(lists);
+
+  const listKeys = () => Object.values(lists());
 
   return (
     <form
@@ -40,19 +41,19 @@ const AddProductToList: Component<AddProductToListProps> = (props) => {
           required
           name="listId"
           value=""
-          disabled={listKeys.length < 1}
+          disabled={listKeys().length < 1}
           class={selectRecipe({ size: "sm", variant: "bordered" })}
         >
           <option value="" disabled>
             Select your option
           </option>
-          <For each={listKeys}>
+          <For each={listKeys()}>
             {(list) => <option value={list.listId}>{list.name}</option>}
           </For>
         </select>
       </label>
       <button
-        disabled={listKeys.length < 1}
+        disabled={listKeys().length < 1}
         class={buttonRecipe({ size: "sm", color: "primary" })}
       >
         Add Product to List
